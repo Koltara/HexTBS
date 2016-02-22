@@ -30,7 +30,7 @@ public class TileBehaviour : MonoBehaviour
     }
 
     
-    void OnMouseEnter()
+    public void HighlightCursor()
     {
         GridManager.instance.selectedTile = tile;
         
@@ -41,8 +41,8 @@ public class TileBehaviour : MonoBehaviour
         }
     }
 
-    //changes back to fully transparent material when mouse cursor is no longer hovering over the tile
-    void OnMouseExit()
+    //changes back to fully transparent material
+    public void RemoveHighlight()
     {
         GridManager.instance.selectedTile = null;
         if (tile.Passable && this != GridManager.instance.destTileTB
@@ -53,10 +53,10 @@ public class TileBehaviour : MonoBehaviour
         }
     }
     //called every frame when mouse cursor is on this tile
-    void OnMouseOver()
+    public void UnlockTile()
     {
         //if player right-clicks on the tile, toggle passable variable and change the color accordingly
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetKeyUp(KeyCode.A))
         {
             if (this == GridManager.instance.destTileTB ||
                 this == GridManager.instance.originTileTB)
@@ -70,7 +70,7 @@ public class TileBehaviour : MonoBehaviour
             GridManager.instance.generateAndShowPath();
         }
         //if user left-clicks the tile
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyUp(KeyCode.S))
         {
             tile.Passable = true;
 

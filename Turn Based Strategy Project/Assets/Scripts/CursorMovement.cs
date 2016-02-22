@@ -29,43 +29,59 @@ public class CursorMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        currentTile.RemoveHighlight();
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-            
-            currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + currentTile.gridY%2, currentTile.gridY + 1)];
-            print(currentTile.tile.Location.X);
-            print(currentTile.tile.Location.Y);
-            moveCursor(currentTile);
+
+            if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX + currentTile.gridY % 2, currentTile.gridY + 1)))
+            { 
+
+                currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + currentTile.gridY % 2, currentTile.gridY + 1)];
+                print(currentTile.tile.Location.X);
+                print(currentTile.tile.Location.Y);
+                moveCursor(currentTile);
+            }
         }
+        
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
 
-
-            currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - (currentTile.gridY - 1)%2, currentTile.gridY - 1)];
-            print(currentTile.tile.Location.X);
-            print(currentTile.tile.Location.Y);
-            moveCursor(currentTile);
+            if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX - (currentTile.gridY - 1) % 2, currentTile.gridY - 1)))
+            {
+                currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - (currentTile.gridY - 1) % 2, currentTile.gridY - 1)];
+                print(currentTile.tile.Location.X);
+                print(currentTile.tile.Location.Y);
+                moveCursor(currentTile);
+            }
         }
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
+            if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX + 1, currentTile.gridY)))
+            {
+                currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + 1, currentTile.gridY)];
 
-            currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + 1, currentTile.gridY)];
-            print(currentTile.tile.Location.X);
-            print(currentTile.tile.Location.Y);
-            moveCursor(currentTile);
+                print(currentTile.tile.Location.X);
+                print(currentTile.tile.Location.Y);
+                moveCursor(currentTile);
+            }
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
-
-            currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - 1, currentTile.gridY)];
-            print(currentTile.tile.Location.X);
-            print(currentTile.tile.Location.Y);
-            moveCursor(currentTile);
+            if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX - 1, currentTile.gridY)))
+            {
+                currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - 1, currentTile.gridY)];
+                print(currentTile.tile.Location.X);
+                print(currentTile.tile.Location.Y);
+                moveCursor(currentTile);
+            }
         }
 
         Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -2);
         tileX = currentTile.gridX;
         tileY = currentTile.gridY;
+
+        currentTile.HighlightCursor();
+        currentTile.UnlockTile();
         
     }
     void moveCursor(TileBehaviour tile)
