@@ -21,7 +21,7 @@ public class CursorMovement : MonoBehaviour {
         
         
         currentTile = (TileBehaviour)Hex.GetComponent("TileBehaviour");
-        currentTile = GridManager.instance.normalizedBoard[GridManager.instance.originTileTB.tile.Location];
+        currentTile = GridManager.instance.normalizedBoard[new Point (0,0)];
         this.transform.position = GridManager.instance.calcWorldCoord(new Vector2(currentTile.gridX, currentTile.gridY));
 
 
@@ -29,7 +29,9 @@ public class CursorMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         currentTile.RemoveHighlight();
+
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
 
@@ -37,8 +39,6 @@ public class CursorMovement : MonoBehaviour {
             { 
 
                 currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + currentTile.gridY % 2, currentTile.gridY + 1)];
-                print(currentTile.tile.Location.X);
-                print(currentTile.tile.Location.Y);
                 moveCursor(currentTile);
             }
         }
@@ -49,8 +49,6 @@ public class CursorMovement : MonoBehaviour {
             if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX - (currentTile.gridY - 1) % 2, currentTile.gridY - 1)))
             {
                 currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - (currentTile.gridY - 1) % 2, currentTile.gridY - 1)];
-                print(currentTile.tile.Location.X);
-                print(currentTile.tile.Location.Y);
                 moveCursor(currentTile);
             }
         }
@@ -60,8 +58,6 @@ public class CursorMovement : MonoBehaviour {
             {
                 currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX + 1, currentTile.gridY)];
 
-                print(currentTile.tile.Location.X);
-                print(currentTile.tile.Location.Y);
                 moveCursor(currentTile);
             }
         }
@@ -70,10 +66,15 @@ public class CursorMovement : MonoBehaviour {
             if (GridManager.instance.normalizedBoard.ContainsKey(new Point(currentTile.gridX - 1, currentTile.gridY)))
             {
                 currentTile = GridManager.instance.normalizedBoard[new Point(currentTile.gridX - 1, currentTile.gridY)];
-                print(currentTile.tile.Location.X);
-                print(currentTile.tile.Location.Y);
                 moveCursor(currentTile);
             }
+        }
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            GridManager.instance.originTileTB.originTileChanged();
+            GridManager.instance.destTileTB.RemoveHighlight();
+            GridManager.instance.destTileTB.destTileChanged();
+            GridManager.instance.generateAndShowPath();
         }
 
         Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -2);

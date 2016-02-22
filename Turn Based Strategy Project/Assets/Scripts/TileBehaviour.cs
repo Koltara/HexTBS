@@ -3,6 +3,14 @@ using System.Collections;
 
 public class TileBehaviour : MonoBehaviour
 {
+
+    public enum TerrainTypes
+    {
+        kNormal = 0,
+        kForest = 1,
+        kHill = 2,
+        kWater = 3
+    };
     public Tile tile;
     
     public Material OpaqueMaterial;
@@ -11,8 +19,11 @@ public class TileBehaviour : MonoBehaviour
     public int gridX;
     public int gridY;
 
+    public TerrainType terrainType;
+
     //Slightly transparent orange
     Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+    
 
     void Update()
     {
@@ -33,29 +44,29 @@ public class TileBehaviour : MonoBehaviour
     public void HighlightCursor()
     {
         GridManager.instance.selectedTile = tile;
-        
-        if (tile.Passable && this != GridManager.instance.destTileTB
-            && this != GridManager.instance.originTileTB)
-        {
-            changeColor(orange);
-        }
+
+            if (tile.Passable && this != GridManager.instance.destTileTB
+                && this != GridManager.instance.originTileTB)
+            {
+                changeColor(orange);
+            }
     }
 
     //changes back to fully transparent material
     public void RemoveHighlight()
     {
         GridManager.instance.selectedTile = null;
-        if (tile.Passable && this != GridManager.instance.destTileTB
+            if (tile.Passable && this != GridManager.instance.destTileTB
             && this != GridManager.instance.originTileTB)
-        {
-            this.GetComponent<Renderer>().material = defaultMaterial;
-            this.GetComponent<Renderer>().material.color = Color.white;
-        }
+            {
+                this.GetComponent<Renderer>().material = defaultMaterial;
+                this.GetComponent<Renderer>().material.color = Color.white;
+            }
     }
-    //called every frame when mouse cursor is on this tile
+    //called every frame when cursor is on this tile
     public void UnlockTile()
     {
-        //if player right-clicks on the tile, toggle passable variable and change the color accordingly
+        //Toggle impassable
         if (Input.GetKeyUp(KeyCode.A))
         {
             if (this == GridManager.instance.destTileTB ||
@@ -69,7 +80,7 @@ public class TileBehaviour : MonoBehaviour
 
             GridManager.instance.generateAndShowPath();
         }
-        //if user left-clicks the tile
+        //Replace Origin/Destination Tile
         if (Input.GetKeyUp(KeyCode.S))
         {
             tile.Passable = true;
@@ -85,7 +96,7 @@ public class TileBehaviour : MonoBehaviour
         }
     }
 
-    void originTileChanged()
+    public void originTileChanged()
     {
         var originTileTB = GridManager.instance.originTileTB;
         //deselect origin tile if user clicks on current origin tile
@@ -100,7 +111,7 @@ public class TileBehaviour : MonoBehaviour
         changeColor(Color.red);
     }
 
-    void destTileChanged()
+    public void destTileChanged()
     {
         var destTile = GridManager.instance.destTileTB;
         //deselect destination tile if user clicks on current destination tile

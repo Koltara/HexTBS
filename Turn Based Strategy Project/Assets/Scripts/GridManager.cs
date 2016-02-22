@@ -108,6 +108,7 @@ public class GridManager : MonoBehaviour {
 
                 var tb = (TileBehaviour)hex.GetComponent("TileBehaviour");
                 tb.tile = new Tile((int)x - (int)(y / 2), (int)y);
+                tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kNormal);
 
                 board.Add(tb.tile.Location, tb);
 
@@ -176,7 +177,7 @@ public class GridManager : MonoBehaviour {
         }
         //We assume that the distance between any two adjacent tiles is 1
         
-        Func<Tile, Tile, double> distance = (node1, node2) => 1;
+        Func<TileBehaviour, TileBehaviour, double> distance = (node1, node2) => node2.terrainType.cost;
 
         var path = PathFinder.FindPath(originTileTB.tile, destTileTB.tile);
         DrawPath(path);
@@ -196,6 +197,9 @@ public class GridManager : MonoBehaviour {
         createGrid();
         PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
         generateAndShowPath();
+
+        originTileTB = null;
+        destTileTB = null;
 
     }
 }
