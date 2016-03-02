@@ -80,8 +80,8 @@ public class TileBehaviour : MonoBehaviour
                 changeColor(Color.gray);
             else
             {
-                this.GetComponent<Renderer>().material = defaultMaterial;
-                this.GetComponent<Renderer>().material.color = Color.white;
+                this.GetComponent<Renderer>().material = OpaqueMaterial;
+                this.GetComponent<Renderer>().material.color = terrainType.tileColor;
             }
             
             GridManager.instance.generateAndShowPath();
@@ -115,6 +115,7 @@ public class TileBehaviour : MonoBehaviour
                     else
                         destTileChanged();
                     GridManager.instance.generateAndShowPath();
+                    GridManager.instance.hideMovementRange();
                 }
                 else
                 {
@@ -139,7 +140,7 @@ public class TileBehaviour : MonoBehaviour
         //}
         //if origin tile is not specified already mark this tile as origin
         GridManager.instance.originTileTB = this;
-        changeColor(Color.red);
+        changeColor(Color.yellow);
     }
 
     public void destTileChanged()
@@ -149,7 +150,7 @@ public class TileBehaviour : MonoBehaviour
         if (this == destTile)
         {
             GridManager.instance.destTileTB = null;
-            GetComponent<Renderer>().material.color = orange;
+            GetComponent<Renderer>().material.color = terrainType.tileColor;
             return;
         }
         //if there was other tile marked as destination, change its material to default (fully transparent) one
@@ -159,7 +160,7 @@ public class TileBehaviour : MonoBehaviour
             if (GridManager.instance.possibleMoves.Contains(destTile))
             {
                 changeColor(Color.blue);
-            } else destTile.GetComponent<Renderer>().material = defaultMaterial;
+            } else destTile.GetComponent<Renderer>().material = OpaqueMaterial;
         }
         GridManager.instance.destTileTB = this;
         //changeColor(Color.blue);

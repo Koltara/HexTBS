@@ -109,18 +109,25 @@ public class GridManager : MonoBehaviour {
 
                 var tb = (TileBehaviour)hex.GetComponent("TileBehaviour");
                 tb.tile = new Tile((int)x - (int)(y / 2), (int)y);
-                tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kNormal);
+
+                if (x % 3 == 0 && x != 0)
+                    tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kForest);
+                else tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kNormal);
 
                 board.Add(tb.tile.Location, tb);
 
                 normalizedBoard.Add(new Point ((int)x, (int)y), tb);
 
+                tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
+                tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
+                
+
                 if (x == 0 && y == 0)
                 {
                     tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
-                    Color red = Color.red;
-                    red.a = 158f / 255f;
-                    tb.GetComponent<Renderer>().material.color = red;
+                    //Color red = Color.red;
+                    //red.a = 158f / 255f;
+                    tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
                     originTileTB = tb;
                 }
             }
@@ -160,15 +167,15 @@ public class GridManager : MonoBehaviour {
             lines = new GameObject("Lines");
         if (path == null)
             return;
-        foreach (Tile tile in path)
-        {
-            var line = (GameObject)Instantiate(Line);
-            //calcWorldCoord method uses squiggly axis coordinates so we add y / 2 to convert x coordinate from straight axis coordinate system
-            Vector2 gridPos = new Vector2(tile.X + tile.Y / 2, tile.Y);
-            line.transform.position = calcWorldCoord(gridPos);
-            this.path.Add(line);
-            line.transform.parent = lines.transform;
-        }
+        //foreach (Tile tile in path)
+        //{
+        //    var line = (GameObject)Instantiate(Line);
+        //    //calcWorldCoord method uses squiggly axis coordinates so we add y / 2 to convert x coordinate from straight axis coordinate system
+        //    Vector2 gridPos = new Vector2(tile.X + tile.Y / 2, tile.Y);
+        //    line.transform.position = calcWorldCoord(gridPos);
+        //    this.path.Add(line);
+        //    line.transform.parent = lines.transform;
+        //}
     }
     public void generateAndShowPath()
     {
@@ -184,7 +191,17 @@ public class GridManager : MonoBehaviour {
 
         var path = PathFinder.FindPath(originTileTB.tile, destTileTB.tile);
         DrawPath(path);
-        //CharacterMovement.instance.StartMoving(path.ToList());
+        if (destTileTB != null)
+        {
+            originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
+            destTileTB.containedCharacter = originTileTB.containedCharacter;
+        }
+        else
+        {
+            //if (originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB != originTileTB)
+            //    originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(originTileTB);
+            //destTileTB.containedCharacter = null;
+        }
     }
 
     //The grid should be generated on game start
@@ -238,8 +255,8 @@ public class GridManager : MonoBehaviour {
             {
                 if (tb.tile.Passable) 
                 {
-                    tb.GetComponent<Renderer>().material = tb.defaultMaterial;
-                    tb.GetComponent<Renderer>().material.color = Color.white;
+                    tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
+                    tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
                 }
             }
             possibleMoves.Clear();

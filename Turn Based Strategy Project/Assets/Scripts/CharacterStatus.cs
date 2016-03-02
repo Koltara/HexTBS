@@ -49,6 +49,13 @@ public class CharacterStatus : MonoBehaviour {
     private int evasion;
     private int evasionMod;
 
+    //Personality Traits
+    public int loyalty;
+    public int courage;
+    public int greed;
+    public int patience;
+    public int friendship;
+
 
 
 	void Start () {

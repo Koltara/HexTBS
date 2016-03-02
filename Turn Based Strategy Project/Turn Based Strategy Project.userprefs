@@ -1,7 +1,8 @@
-﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GridManager.cs">
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TileBehaviour.cs">
     <Files>
+      <File FileName="Assets\Scripts\TileBehaviour.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GridManager.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
