@@ -30,6 +30,7 @@ public class GridManager : MonoBehaviour {
     
 
     List<GameObject> path;
+    public List<TileBehaviour> possibleMoves;
 
     //void Awake()
     //{
@@ -157,6 +158,8 @@ public class GridManager : MonoBehaviour {
         GameObject lines = GameObject.Find("Lines");
         if (lines == null)
             lines = new GameObject("Lines");
+        if (path == null)
+            return;
         foreach (Tile tile in path)
         {
             var line = (GameObject)Instantiate(Line);
@@ -181,7 +184,7 @@ public class GridManager : MonoBehaviour {
 
         var path = PathFinder.FindPath(originTileTB.tile, destTileTB.tile);
         DrawPath(path);
-        CharacterMovement.instance.StartMoving(path.ToList());
+        //CharacterMovement.instance.StartMoving(path.ToList());
     }
 
     //The grid should be generated on game start
@@ -196,10 +199,52 @@ public class GridManager : MonoBehaviour {
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
         PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
+        board[new Point(0, 0)].containedCharacter = PlayerChar;
         generateAndShowPath();
 
         originTileTB = null;
         destTileTB = null;
 
+
+    }
+    public void generateMovementRange(TileBehaviour startTile, int movementRange)
+    {
+        if (this.possibleMoves == null)
+            this.possibleMoves = new List<TileBehaviour>();
+
+        if (movementRange < 0)
+        {
+            return;
+        }
+        if (startTile.tile.Passable)
+        {
+            startTile.changeColor(Color.blue);
+            possibleMoves.Add(startTile);
+        }
+
+        foreach(Tile tile in startTile.tile.Neighbours)
+        {
+            //if (!possibleMoves.Contains(board[tile.Location]))
+            TileBehaviour tileTB = board[tile.Location];
+            generateMovementRange(tileTB, movementRange - tileTB.terrainType.cost);
+        }
+
+    }
+    public void hideMovementRange()
+    {
+        if (possibleMoves != null)
+        {
+            foreach (TileBehaviour tb in possibleMoves)
+            {
+                if (tb.tile.Passable) 
+                {
+                    tb.GetComponent<Renderer>().material = tb.defaultMaterial;
+                    tb.GetComponent<Renderer>().material.color = Color.white;
+                }
+            }
+            possibleMoves.Clear();
+        }
+        
     }
 }
+    

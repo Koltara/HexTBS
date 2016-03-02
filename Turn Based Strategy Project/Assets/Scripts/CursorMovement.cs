@@ -71,13 +71,20 @@ public class CursorMovement : MonoBehaviour {
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            GridManager.instance.originTileTB.originTileChanged();
-            GridManager.instance.destTileTB.RemoveHighlight();
-            GridManager.instance.destTileTB.destTileChanged();
+            GridManager.instance.hideMovementRange();
+            if (GridManager.instance.originTileTB != null)
+                GridManager.instance.originTileTB.originTileChanged();
+            if (GridManager.instance.destTileTB != null)
+            {
+                GridManager.instance.destTileTB.RemoveHighlight();
+                GridManager.instance.destTileTB.destTileChanged();
+                
+            }
+            
             GridManager.instance.generateAndShowPath();
         }
 
-        Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -2);
+        Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -8);
         tileX = currentTile.gridX;
         tileY = currentTile.gridY;
 
