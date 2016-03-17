@@ -31,6 +31,8 @@ public class TileBehaviour : MonoBehaviour
     {
         gridX = tile.X + tile.Y / 2;
         gridY = tile.Y;
+        if (this.containedCharacter != null)
+            this.containedCharacter.transform.position = this.transform.position;
     }
 
     public void changeColor(Color color)
@@ -86,20 +88,27 @@ public class TileBehaviour : MonoBehaviour
             
             GridManager.instance.generateAndShowPath();
         }
-        //Replace Origin/Destination Tile
+       
         if (Input.GetKeyUp(KeyCode.S))
         {
+            bool unitSelected = false;
+            if (GridManager.instance.originTileTB != null)
+                unitSelected = true;
+
             tile.Passable = true;
             if (this.containedCharacter != null)
             {
                 //Space has a character
+                unitSelected = true;
 
                 TileBehaviour originTileTB = GridManager.instance.originTileTB;
                 //if user clicks on origin tile or origin tile is not assigned yet
-                if (this == originTileTB || originTileTB == null)
-                    originTileChanged();
-                else
-                    destTileChanged();
+                if (unitSelected)
+                    if (this == originTileTB || originTileTB == null)
+                        GridManager.instance.originTileTB = this;
+
+                //else
+                //    destTileChanged();
                 GridManager.instance.hideMovementRange();
                 GridManager.instance.generateMovementRange(this, 5);
                 GridManager.instance.generateAndShowPath();
@@ -110,12 +119,10 @@ public class TileBehaviour : MonoBehaviour
                 {
                     TileBehaviour originTileTB = GridManager.instance.originTileTB;
                     //if user clicks on origin tile or origin tile is not assigned yet
-                    if (this == originTileTB || originTileTB == null)
-                        originTileChanged();
-                    else
-                        destTileChanged();
+                    GridManager.instance.destTileTB = this;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
+                    unitSelected = false;
                 }
                 else
                 {

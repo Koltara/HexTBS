@@ -9,24 +9,20 @@ public class SimpleCharacterMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        if (currentTile != null)
-        {
-            currentTB = GridManager.instance.board[currentTile.Location];
-            currentTile = currentTB.tile;
-        }
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (currentTile != null)
-        {
-            currentTB = GridManager.instance.board[currentTile.Location];
-            currentTile = currentTB.tile;
-        }
+        //if (currentTile != null)
+        //{
+        //    currentTB = GridManager.instance.board[currentTile.Location];
+        //    currentTile = currentTB.tile;
+        //}
 	}
     public void MoveTo(TileBehaviour destTile)
     {
-        this.transform.position = GridManager.instance.calcWorldCoord(new Vector2(destTile.gridX, destTile.gridY));
+        this.transform.position = GridManager.instance.calcWorldCoord(new Vector2(destTile.tile.Location.X, destTile.tile.Location.Y));
         currentTile = destTile.tile;
         currentTB = destTile;
     }

@@ -193,14 +193,17 @@ public class GridManager : MonoBehaviour {
         DrawPath(path);
         if (destTileTB != null)
         {
-            originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
-            destTileTB.containedCharacter = originTileTB.containedCharacter;
+            if (originTileTB.containedCharacter != null)
+            {
+               
+                destTileTB.containedCharacter = originTileTB.containedCharacter;
+                originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
+                originTileTB.containedCharacter = null;
+            }
         }
         else
         {
-            //if (originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB != originTileTB)
-            //    originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(originTileTB);
-            //destTileTB.containedCharacter = null;
+            
         }
     }
 
@@ -216,13 +219,14 @@ public class GridManager : MonoBehaviour {
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
         PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
+        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = board[new Point(0, 0)];
+        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTile = PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB.tile;
         board[new Point(0, 0)].containedCharacter = PlayerChar;
-        generateAndShowPath();
 
         originTileTB = null;
         destTileTB = null;
 
-
+        generateAndShowPath();
     }
     public void generateMovementRange(TileBehaviour startTile, int movementRange)
     {
