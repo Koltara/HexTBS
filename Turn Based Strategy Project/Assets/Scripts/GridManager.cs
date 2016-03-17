@@ -27,6 +27,8 @@ public class GridManager : MonoBehaviour {
     public Dictionary<Point, TileBehaviour> board;
     public Dictionary<Point, TileBehaviour> normalizedBoard;
 
+    public Boolean unitSelected = false;
+
     
 
     List<GameObject> path;
@@ -120,7 +122,7 @@ public class GridManager : MonoBehaviour {
 
                 tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
                 tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
-                
+                tb.containedCharacter = null;
 
                 if (x == 0 && y == 0)
                 {
@@ -191,37 +193,33 @@ public class GridManager : MonoBehaviour {
 
         var path = PathFinder.FindPath(originTileTB.tile, destTileTB.tile);
         DrawPath(path);
-        if (destTileTB != null)
-        {
-            if (originTileTB.containedCharacter != null)
-            {
-               
+        //if (destTileTB != null)
+        //{
+        //    if (originTileTB.containedCharacter != null)
+        //    {
                 destTileTB.containedCharacter = originTileTB.containedCharacter;
-                originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
                 originTileTB.containedCharacter = null;
-            }
-        }
-        else
-        {
-            
-        }
+                destTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
+                this.originTileTB = null;
+                this.destTileTB = null;
+        //    }
+        //}
     }
 
     //The grid should be generated on game start
     void Start()
     {
-        
-        Instantiate(PlayerChar);
-        
+         
         instance = this;
         setSizes();
         Instantiate(Cursor);
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
         PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
-        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = board[new Point(0, 0)];
+        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
         PlayerChar.GetComponent<SimpleCharacterMovement>().currentTile = PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB.tile;
-        board[new Point(0, 0)].containedCharacter = PlayerChar;
+        originTileTB.containedCharacter = PlayerChar;
+        Instantiate(PlayerChar);
 
         originTileTB = null;
         destTileTB = null;

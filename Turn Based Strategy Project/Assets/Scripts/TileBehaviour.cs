@@ -31,8 +31,8 @@ public class TileBehaviour : MonoBehaviour
     {
         gridX = tile.X + tile.Y / 2;
         gridY = tile.Y;
-        if (this.containedCharacter != null)
-            this.containedCharacter.transform.position = this.transform.position;
+        //if (this.containedCharacter != null)
+        //    this.containedCharacter.transform.position = this.transform.position;
     }
 
     public void changeColor(Color color)
@@ -91,19 +91,19 @@ public class TileBehaviour : MonoBehaviour
        
         if (Input.GetKeyUp(KeyCode.S))
         {
-            bool unitSelected = false;
+            
             if (GridManager.instance.originTileTB != null)
-                unitSelected = true;
+                GridManager.instance.unitSelected = true;
 
             tile.Passable = true;
             if (this.containedCharacter != null)
             {
                 //Space has a character
-                unitSelected = true;
+                GridManager.instance.unitSelected = true;
 
                 TileBehaviour originTileTB = GridManager.instance.originTileTB;
                 //if user clicks on origin tile or origin tile is not assigned yet
-                if (unitSelected)
+                if (GridManager.instance.unitSelected)
                     if (this == originTileTB || originTileTB == null)
                         GridManager.instance.originTileTB = this;
 
@@ -115,14 +115,18 @@ public class TileBehaviour : MonoBehaviour
             } else
             {
                 //Space has no character
-                if (GridManager.instance.possibleMoves.Contains(this))
+                if (GridManager.instance.possibleMoves.Contains(this) && GridManager.instance.unitSelected)
                 {
                     TileBehaviour originTileTB = GridManager.instance.originTileTB;
-                    //if user clicks on origin tile or origin tile is not assigned yet
+
+                    
                     GridManager.instance.destTileTB = this;
+                    originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB = this;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
-                    unitSelected = false;
+                    GridManager.instance.destTileTB = null;
+                    GridManager.instance.originTileTB = null;
+                    
                 }
                 else
                 {
@@ -130,7 +134,9 @@ public class TileBehaviour : MonoBehaviour
                     GridManager.instance.originTileTB = null;
                     GridManager.instance.hideMovementRange();
                     GridManager.instance.generateAndShowPath();
+                    
                 }
+                GridManager.instance.unitSelected = false;
             }
         }
     }
