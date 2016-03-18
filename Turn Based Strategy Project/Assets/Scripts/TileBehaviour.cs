@@ -25,6 +25,15 @@ public class TileBehaviour : MonoBehaviour
 
     //Slightly transparent orange
     Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+
+    public GameObject getContainedCharacter()
+    {
+        return containedCharacter;
+    }
+    public void setContainedCharacter(GameObject character)
+    {
+        containedCharacter = character;
+    }
     
 
     void Update()
@@ -124,8 +133,6 @@ public class TileBehaviour : MonoBehaviour
                     originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB = this;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
-                    GridManager.instance.destTileTB = null;
-                    GridManager.instance.originTileTB = null;
                     
                 }
                 else

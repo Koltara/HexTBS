@@ -4,10 +4,11 @@ using System.Collections;
 public class SimpleCharacterMovement : MonoBehaviour {
     public TileBehaviour currentTB;
     public Tile currentTile;
+    public static SimpleCharacterMovement instance;
 
 	// Use this for initialization
 	void Start () {
-        currentTB = null;
+        instance = this;
 	}
 	
 	// Update is called once per frame
@@ -26,6 +27,7 @@ public class SimpleCharacterMovement : MonoBehaviour {
         Debug.Log(destTile.gridX);
         Debug.Log(destTile.gridY);
         this.gameObject.transform.position = GridManager.instance.calcWorldCoord(new Vector2(destTile.gridX, destTile.gridY));
+ //       this.transform.position = GridManager.instance.calcWorldCoord(new Vector2(destTile.gridX, destTile.gridY));
         Debug.Log("Character should have moved now.");
         //GridManager.instance.originTileTB = null;
         

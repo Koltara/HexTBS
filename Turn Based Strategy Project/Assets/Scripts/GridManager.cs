@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour {
     public GameObject Line;
     public GameObject Cursor;
     public GameObject PlayerChar;
+    GameObject playerCharInstance;
 
     public CursorMovement cursorScript;
 
@@ -122,7 +123,7 @@ public class GridManager : MonoBehaviour {
 
                 tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
                 tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
-                tb.containedCharacter = null;
+                tb.setContainedCharacter(null);
 
                 if (x == 0 && y == 0)
                 {
@@ -197,9 +198,9 @@ public class GridManager : MonoBehaviour {
         //{
         //    if (originTileTB.containedCharacter != null)
         //    {
-                destTileTB.containedCharacter = originTileTB.containedCharacter;
-                originTileTB.containedCharacter = null;
-                destTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
+                destTileTB.setContainedCharacter(originTileTB.getContainedCharacter());
+                originTileTB.setContainedCharacter(null);
+                destTileTB.getContainedCharacter().GetComponent<SimpleCharacterMovement>().MoveTo(destTileTB);
                 this.originTileTB = null;
                 this.destTileTB = null;
         //    }
@@ -215,11 +216,15 @@ public class GridManager : MonoBehaviour {
         Instantiate(Cursor);
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
-        PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
-        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
-        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTile = PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB.tile;
-        originTileTB.containedCharacter = PlayerChar;
-        Instantiate(PlayerChar);
+        this.GetComponent<CharacterManager>().generateCharacterList();
+        playerCharInstance = PlayerChar;
+        playerCharInstance.transform.position = calcWorldCoord(new Vector2(0, 0));
+        playerCharInstance.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
+
+        Instantiate(playerCharInstance);
+        this.GetComponent<CharacterManager>().addCharacter(playerCharInstance);
+        this.GetComponent<CharacterManager>().getCharacter(0).GetComponent<SimpleCharacterMovement>().currentTB.setContainedCharacter(this.GetComponent<CharacterManager>().getCharacter(0));
+    
 
         originTileTB = null;
         destTileTB = null;

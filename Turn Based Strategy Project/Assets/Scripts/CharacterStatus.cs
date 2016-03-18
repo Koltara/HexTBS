@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class CharacterStatus : MonoBehaviour {
+    private int slot;
+    public static CharacterStatus instance;
 
     //Character Properties
     /*
@@ -59,11 +61,15 @@ public class CharacterStatus : MonoBehaviour {
 
 
 	void Start () {
-	
+        instance = this;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    
 	}
+    public void setSlot(int index)
+    {
+        slot = index;
+    }
 }
