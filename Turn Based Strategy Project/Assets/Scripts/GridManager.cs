@@ -217,11 +217,10 @@ public class GridManager : MonoBehaviour {
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
         this.GetComponent<CharacterManager>().generateCharacterList();
-        playerCharInstance = PlayerChar;
-        playerCharInstance.transform.position = calcWorldCoord(new Vector2(0, 0));
-        playerCharInstance.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
+        PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
+        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
 
-        Instantiate(playerCharInstance);
+        playerCharInstance = Instantiate(PlayerChar);
         this.GetComponent<CharacterManager>().addCharacter(playerCharInstance);
         this.GetComponent<CharacterManager>().getCharacter(0).GetComponent<SimpleCharacterMovement>().currentTB.setContainedCharacter(this.GetComponent<CharacterManager>().getCharacter(0));
     
