@@ -22,9 +22,19 @@ public class TileBehaviour : MonoBehaviour
     public TerrainType terrainType;
 
     public GameObject containedCharacter;
+    private bool playerSpawnTile = false;
 
     //Slightly transparent orange
     Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+
+    public bool getTileStatus()
+    {
+        return playerSpawnTile;
+    }
+    public void setPlayerSpawnStatus(bool spawn)
+    {
+        playerSpawnTile = spawn;
+    }
 
     public GameObject getContainedCharacter()
     {

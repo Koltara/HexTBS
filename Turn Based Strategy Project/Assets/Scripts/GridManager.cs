@@ -117,6 +117,9 @@ public class GridManager : MonoBehaviour {
                     tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kForest);
                 else tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kNormal);
 
+                if (x % 4 == 0 && y == 0)
+                    tb.setPlayerSpawnStatus(true);
+
                 board.Add(tb.tile.Location, tb);
 
                 normalizedBoard.Add(new Point ((int)x, (int)y), tb);
@@ -216,19 +219,92 @@ public class GridManager : MonoBehaviour {
         Instantiate(Cursor);
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
-        this.GetComponent<CharacterManager>().generateCharacterList();
-        PlayerChar.transform.position = calcWorldCoord(new Vector2(0, 0));
-        PlayerChar.GetComponent<SimpleCharacterMovement>().currentTB = originTileTB;
-
-        playerCharInstance = Instantiate(PlayerChar);
-        this.GetComponent<CharacterManager>().addCharacter(playerCharInstance);
-        this.GetComponent<CharacterManager>().getCharacter(0).GetComponent<SimpleCharacterMovement>().currentTB.setContainedCharacter(this.GetComponent<CharacterManager>().getCharacter(0));
-    
+        spawnCharacters();
 
         originTileTB = null;
         destTileTB = null;
 
         generateAndShowPath();
+    }
+    void spawnCharacters()
+    {
+        int characterListPosition = 0;
+        this.GetComponent<CharacterManager>().generateCharacterList();
+        populateCharacterList(3);
+
+        //Iterate through the gameboard, spawning characters from the character list at player spawn tiles
+        for (int i = 0; i < gridWidthInHexes; i++)
+            for (int j = 0; j < gridHeightInHexes; j++)
+            {
+                //If we've spawned every character
+                if (characterListPosition >= this.GetComponent<CharacterManager>().getCharacterListSize())
+                    return;
+                //Store character to spawn
+                GameObject tempCharacter = this.GetComponent<CharacterManager>().getCharacter(characterListPosition);
+                //Store current tile
+                TileBehaviour tempTB = normalizedBoard[new Point(i,j)];
+
+                if (tempTB.getTileStatus())
+                {
+                    GameObject charInstance;
+                    if (characterListPosition < this.GetComponent<CharacterManager>().getCharacterListSize())
+                    {
+                        charInstance = Instantiate(tempCharacter);
+                        tempTB.setContainedCharacter(charInstance);
+
+                        charInstance.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
+                        charInstance.transform.position = calcWorldCoord(new Vector2(i, j));
+
+                        this.GetComponent<CharacterManager>().addCharacterInstance(charInstance);
+                        characterListPosition++;
+                    }
+                }
+
+            }
+    }
+    void populateCharacterList(int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            //GameObject tempCharInstance;
+
+            PlayerChar.GetComponent<CharacterStatus>().agility = 5;
+            PlayerChar.GetComponent<CharacterStatus>().agilityMod = 0;
+            PlayerChar.GetComponent<CharacterStatus>().agilityRate = 45;
+
+            PlayerChar.GetComponent<CharacterStatus>().strength = 5;
+            PlayerChar.GetComponent<CharacterStatus>().strengthMod = 0;
+            PlayerChar.GetComponent<CharacterStatus>().strengthRate = 45;
+
+            PlayerChar.GetComponent<CharacterStatus>().skill = 5;
+            PlayerChar.GetComponent<CharacterStatus>().skillMod = 0;
+            PlayerChar.GetComponent<CharacterStatus>().skillRate = 45;
+
+            PlayerChar.GetComponent<CharacterStatus>().healthMax = 15;
+            PlayerChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
+            PlayerChar.GetComponent<CharacterStatus>().healthRate = 45;
+
+            PlayerChar.GetComponent<CharacterStatus>().healthCurrent = 5;
+            PlayerChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
+
+            PlayerChar.GetComponent<CharacterStatus>().moveDistance = 5;
+            PlayerChar.GetComponent<CharacterStatus>().moveDistanceMod = 0;
+
+            PlayerChar.GetComponent<CharacterStatus>().currentLevel = 1;
+            PlayerChar.GetComponent<CharacterStatus>().levelCap = 20;
+            PlayerChar.GetComponent<CharacterStatus>().experience = 0;
+
+            PlayerChar.GetComponent<CharacterStatus>().loyalty = 50;
+            PlayerChar.GetComponent<CharacterStatus>().courage = 50;
+            PlayerChar.GetComponent<CharacterStatus>().greed = 50;
+            PlayerChar.GetComponent<CharacterStatus>().friendship = 50;
+            PlayerChar.GetComponent<CharacterStatus>().patience = 50;
+
+
+            this.GetComponent<CharacterManager>().addCharacter(PlayerChar);
+
+            
+        }
     }
     public void generateMovementRange(TileBehaviour startTile, int movementRange)
     {

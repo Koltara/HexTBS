@@ -15,6 +15,7 @@ public class CharacterStatus : MonoBehaviour {
     //Level
     public int currentLevel;
     public int levelCap;
+    public int experience;
 
     //Strength
     public int strength;
