@@ -139,7 +139,10 @@ public class TileBehaviour : MonoBehaviour
             {
                 //Space has a character
                 if (GridManager.instance.unitSelected)
+                {
+                    
                     return;
+                }
                 if (!this.containedCharacter.GetComponent<CharacterStatus>().ableToMove)
                     return;
                 GridManager.instance.unitSelected = true;
@@ -168,7 +171,18 @@ public class TileBehaviour : MonoBehaviour
                     originTileTB.containedCharacter.GetComponent<CharacterStatus>().ableToMove = false;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
-                    
+
+                    foreach (Tile tile in this.tile.AllNeighbours)
+                    {
+                        TileBehaviour tileTB = GridManager.instance.board[tile.Location];
+                        if (tileTB.hasEnemy)
+                        {
+                            TurnManager.instance.initiateCombat(this.containedCharacter, tileTB.containedCharacter);
+                            Debug.Log(this.containedCharacter + "fighting " + tileTB.containedCharacter);
+                        }
+                    }
+
+
                 }
                 else
                 {

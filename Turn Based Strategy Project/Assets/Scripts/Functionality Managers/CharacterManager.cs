@@ -14,13 +14,17 @@ public class CharacterManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         instance = this;
+        setActionableCharacters();
+	}
+    public void setActionableCharacters()
+    {
         for (int i = 0; i < characterInstanceList.Count(); i++)
         {
             if (characterInstanceList[i].GetComponent<CharacterStatus>().ableToMove)
                 numActionableCharacters++;
         }
         inspectorActionable = numActionableCharacters;
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -33,11 +37,7 @@ public class CharacterManager : MonoBehaviour {
                 return;
             }
             numActionableCharacters = 0;
-            for (int i = 0; i < characterInstanceList.Count(); i++)
-            {
-                if (characterInstanceList[i].GetComponent<CharacterStatus>().ableToMove)
-                    numActionableCharacters++;
-            }
+            setActionableCharacters();
         }
         inspectorActionable = numActionableCharacters;
 	}
@@ -58,6 +58,10 @@ public class CharacterManager : MonoBehaviour {
     public void addCharacterInstance(GameObject character)
     {
         characterInstanceList.Add(character);
+    }
+    public void removeCharacterInstance(GameObject character)
+    {
+        characterInstanceList.Remove(character);
     }
     public void setCharacterInstance(GameObject character, int index)
     {

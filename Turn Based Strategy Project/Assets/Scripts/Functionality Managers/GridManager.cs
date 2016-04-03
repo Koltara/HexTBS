@@ -239,6 +239,8 @@ public class GridManager : MonoBehaviour {
 
         populateCharacterList(3);
         populateEnemyList(4);
+        Debug.Log("Character Name: " + this.GetComponent<CharacterManager>().getCharacter(0).GetComponent<CharacterStatus>().characterName);
+        Debug.Log("Character Name: " + this.GetComponent<CharacterManager>().getCharacter(1).GetComponent<CharacterStatus>().characterName);
 
         //Iterate through the gameboard, spawning characters from the character list at player spawn tiles
         for (int i = 0; i < gridWidthInHexes; i++)
@@ -249,6 +251,7 @@ public class GridManager : MonoBehaviour {
                     break;
                 //Store character to spawn
                 GameObject tempCharacter = this.GetComponent<CharacterManager>().getCharacter(characterListPosition);
+                
                 //Store current tile
                 TileBehaviour tempTB = normalizedBoard[new Point(i,j)];
 
@@ -257,11 +260,13 @@ public class GridManager : MonoBehaviour {
                     GameObject charInstance;
                     if (characterListPosition < this.GetComponent<CharacterManager>().getCharacterListSize())
                     {
+                        Debug.Log("Generated Character at: " + characterListPosition);
                         charInstance = Instantiate(tempCharacter);
                         tempTB.setContainedCharacter(charInstance);
 
                         charInstance.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
                         charInstance.transform.position = calcWorldCoord(new Vector2(i, j));
+                        charInstance.name = tempCharacter.GetComponent<CharacterStatus>().characterName;
 
                         this.GetComponent<CharacterManager>().addCharacterInstance(charInstance);
                         characterListPosition++;
@@ -286,12 +291,13 @@ public class GridManager : MonoBehaviour {
                     GameObject enemyInstance;
                     if (enemyListPosition < this.GetComponent<EnemyManager>().getEnemyListSize())
                     {
+                        
                         enemyInstance = Instantiate(tempEnemy);
                         tempTB.setContainedCharacter(enemyInstance);
                         tempTB.tile.Passable = false;
                         tempTB.setEnemy(true);
 
-                        enemyInstance.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
+                        enemyInstance.GetComponent<EnemyMovementController>().currentTB = tempTB;
                         enemyInstance.transform.position = calcWorldCoord(new Vector2(i, j));
 
                         this.GetComponent<EnemyManager>().addEnemyInstance(enemyInstance);
@@ -305,42 +311,49 @@ public class GridManager : MonoBehaviour {
     {
         for (int i = 0; i < size; i++)
         {
-            //GameObject tempCharInstance;
+            GameObject tempChar = PlayerChar;
 
-            PlayerChar.GetComponent<CharacterStatus>().agility = 5;
-            PlayerChar.GetComponent<CharacterStatus>().agilityMod = 0;
-            PlayerChar.GetComponent<CharacterStatus>().agilityRate = 45;
+            tempChar.GetComponent<CharacterStatus>().characterName = "";
+            tempChar.GetComponent<CharacterStatus>().characterName = "Player Unit " + (i+1);
 
-            PlayerChar.GetComponent<CharacterStatus>().strength = 5;
-            PlayerChar.GetComponent<CharacterStatus>().strengthMod = 0;
-            PlayerChar.GetComponent<CharacterStatus>().strengthRate = 45;
+            tempChar.GetComponent<CharacterStatus>().agility = 5;
+            tempChar.GetComponent<CharacterStatus>().agilityMod = 0;
+            tempChar.GetComponent<CharacterStatus>().agilityRate = 45;
 
-            PlayerChar.GetComponent<CharacterStatus>().skill = 5;
-            PlayerChar.GetComponent<CharacterStatus>().skillMod = 0;
-            PlayerChar.GetComponent<CharacterStatus>().skillRate = 45;
+            tempChar.GetComponent<CharacterStatus>().strength = 5;
+            tempChar.GetComponent<CharacterStatus>().strengthMod = 0;
+            tempChar.GetComponent<CharacterStatus>().strengthRate = 45;
 
-            PlayerChar.GetComponent<CharacterStatus>().healthMax = 15;
-            PlayerChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
-            PlayerChar.GetComponent<CharacterStatus>().healthRate = 45;
+            tempChar.GetComponent<CharacterStatus>().skill = 5;
+            tempChar.GetComponent<CharacterStatus>().skillMod = 0;
+            tempChar.GetComponent<CharacterStatus>().skillRate = 45;
 
-            PlayerChar.GetComponent<CharacterStatus>().healthCurrent = 5;
-            PlayerChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
+            tempChar.GetComponent<CharacterStatus>().defense = 5;
+            tempChar.GetComponent<CharacterStatus>().defenseMod = 0;
+            tempChar.GetComponent<CharacterStatus>().defenseRate = 45;
 
-            PlayerChar.GetComponent<CharacterStatus>().moveDistance = 5;
-            PlayerChar.GetComponent<CharacterStatus>().moveDistanceMod = 0;
+            tempChar.GetComponent<CharacterStatus>().healthMax = 15;
+            tempChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
+            tempChar.GetComponent<CharacterStatus>().healthRate = 45;
 
-            PlayerChar.GetComponent<CharacterStatus>().currentLevel = 1;
-            PlayerChar.GetComponent<CharacterStatus>().levelCap = 20;
-            PlayerChar.GetComponent<CharacterStatus>().experience = 0;
+            tempChar.GetComponent<CharacterStatus>().healthCurrent = 15;
+            tempChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
 
-            PlayerChar.GetComponent<CharacterStatus>().loyalty = 50;
-            PlayerChar.GetComponent<CharacterStatus>().courage = 50;
-            PlayerChar.GetComponent<CharacterStatus>().greed = 50;
-            PlayerChar.GetComponent<CharacterStatus>().friendship = 50;
-            PlayerChar.GetComponent<CharacterStatus>().patience = 50;
+            tempChar.GetComponent<CharacterStatus>().moveDistance = 5;
+            tempChar.GetComponent<CharacterStatus>().moveDistanceMod = 0;
+
+            tempChar.GetComponent<CharacterStatus>().currentLevel = 1;
+            tempChar.GetComponent<CharacterStatus>().levelCap = 20;
+            tempChar.GetComponent<CharacterStatus>().experience = 0;
+
+            tempChar.GetComponent<CharacterStatus>().loyalty = 50;
+            tempChar.GetComponent<CharacterStatus>().courage = 50;
+            tempChar.GetComponent<CharacterStatus>().greed = 50;
+            tempChar.GetComponent<CharacterStatus>().friendship = 50;
+            tempChar.GetComponent<CharacterStatus>().patience = 50;
 
 
-            this.GetComponent<CharacterManager>().addCharacter(PlayerChar);
+            this.GetComponent<CharacterManager>().addCharacter(tempChar);
 
             
         }
@@ -350,6 +363,7 @@ public class GridManager : MonoBehaviour {
         for (int i = 0; i < size; i++)
         {
             //GameObject tempCharInstance;
+            EnemyChar.GetComponent<CharacterStatus>().characterName = "Enemy Unit " + (i + 1);
 
             EnemyChar.GetComponent<CharacterStatus>().agility = 5;
             EnemyChar.GetComponent<CharacterStatus>().agilityMod = 0;
@@ -367,7 +381,11 @@ public class GridManager : MonoBehaviour {
             EnemyChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
             EnemyChar.GetComponent<CharacterStatus>().healthRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().healthCurrent = 5;
+            EnemyChar.GetComponent<CharacterStatus>().defense = 2;
+            EnemyChar.GetComponent<CharacterStatus>().defenseMod = 0;
+            EnemyChar.GetComponent<CharacterStatus>().defenseRate = 45;
+
+            EnemyChar.GetComponent<CharacterStatus>().healthCurrent = 15;
             EnemyChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
 
             EnemyChar.GetComponent<CharacterStatus>().moveDistance = 5;

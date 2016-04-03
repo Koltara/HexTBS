@@ -9,20 +9,48 @@ public class EnemyManager : MonoBehaviour {
     List<GameObject> enemyList;
     List<GameObject> enemyInstanceList;
     public static EnemyManager instance;
+
+    private int numActionableEnemies = 0;
+    public int inspectorActionable = 0;
     // Use this for initialization
     void Start()
     {
         instance = this;
-    }
 
+        setActionableEnemies();
+    }
+    public void setActionableEnemies()
+    {
+        for (int i = 0; i < enemyInstanceList.Count(); i++)
+        {
+            if (enemyInstanceList[i].GetComponent<CharacterStatus>().ableToMove)
+                numActionableEnemies++;
+        }
+        inspectorActionable = numActionableEnemies;
+    }
     // Update is called once per frame
     void Update()
     {
+        if (TurnManager.instance.getPhaseStatus() == TurnManager.kEnemy)
+        {
+            if (numActionableEnemies <= 0)
+            {
+                TurnManager.instance.nextPhase();
 
+                return;
+            }
+            numActionableEnemies = 0;
+            setActionableEnemies();
+        }
+        inspectorActionable = numActionableEnemies;
     }
     public int getEnemyListSize()
     {
         return enemyList.Count();
+    }
+    public int getEnemyInstanceListSize()
+    {
+        return enemyInstanceList.Count();
     }
     public void generateEnemyList()
     {
@@ -46,6 +74,10 @@ public class EnemyManager : MonoBehaviour {
         if (enemyInstanceList.Count > index)
             return enemyInstanceList[index];
         else return null;
+    }
+    public void removeEnemyInstance(GameObject character)
+    {
+        enemyInstanceList.Remove(character);
     }
 
     //Reference Enemy List
