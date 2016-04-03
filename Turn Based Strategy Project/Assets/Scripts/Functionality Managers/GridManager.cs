@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour {
     public GameObject Line;
     public GameObject Cursor;
     public GameObject PlayerChar;
+    public GameObject EnemyChar;
     GameObject playerCharInstance;
 
     public CursorMovement cursorScript;
@@ -119,6 +120,8 @@ public class GridManager : MonoBehaviour {
 
                 if (x % 4 == 0 && y == 0)
                     tb.setPlayerSpawnStatus(true);
+                if (x % 5 == 0 && y == 5)
+                    tb.setEnemySpawnTile(true);
 
                 board.Add(tb.tile.Location, tb);
 
@@ -229,8 +232,13 @@ public class GridManager : MonoBehaviour {
     void spawnCharacters()
     {
         int characterListPosition = 0;
+        int enemyListPosition = 0;
+
         this.GetComponent<CharacterManager>().generateCharacterList();
+        this.GetComponent<EnemyManager>().generateEnemyList();
+
         populateCharacterList(3);
+        populateEnemyList(4);
 
         //Iterate through the gameboard, spawning characters from the character list at player spawn tiles
         for (int i = 0; i < gridWidthInHexes; i++)
@@ -238,7 +246,7 @@ public class GridManager : MonoBehaviour {
             {
                 //If we've spawned every character
                 if (characterListPosition >= this.GetComponent<CharacterManager>().getCharacterListSize())
-                    return;
+                    break;
                 //Store character to spawn
                 GameObject tempCharacter = this.GetComponent<CharacterManager>().getCharacter(characterListPosition);
                 //Store current tile
@@ -257,6 +265,37 @@ public class GridManager : MonoBehaviour {
 
                         this.GetComponent<CharacterManager>().addCharacterInstance(charInstance);
                         characterListPosition++;
+                    }
+                }
+
+            }
+        //Once more for enemy spawns
+        for (int i = 0; i < gridWidthInHexes; i++)
+            for (int j = 0; j < gridHeightInHexes; j++)
+            {
+                //If we've spawned every character
+                if (enemyListPosition >= this.GetComponent<EnemyManager>().getEnemyListSize())
+                    break;
+                //Store character to spawn
+                GameObject tempEnemy = this.GetComponent<EnemyManager>().getEnemy(enemyListPosition);
+                //Store current tile
+                TileBehaviour tempTB = normalizedBoard[new Point(i, j)];
+
+                if (tempTB.getEnemySpawnTile())
+                {
+                    GameObject enemyInstance;
+                    if (enemyListPosition < this.GetComponent<EnemyManager>().getEnemyListSize())
+                    {
+                        enemyInstance = Instantiate(tempEnemy);
+                        tempTB.setContainedCharacter(enemyInstance);
+                        tempTB.tile.Passable = false;
+                        tempTB.setEnemy(true);
+
+                        enemyInstance.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
+                        enemyInstance.transform.position = calcWorldCoord(new Vector2(i, j));
+
+                        this.GetComponent<EnemyManager>().addEnemyInstance(enemyInstance);
+                        enemyListPosition++;
                     }
                 }
 
@@ -304,6 +343,50 @@ public class GridManager : MonoBehaviour {
             this.GetComponent<CharacterManager>().addCharacter(PlayerChar);
 
             
+        }
+    }
+    void populateEnemyList(int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            //GameObject tempCharInstance;
+
+            EnemyChar.GetComponent<CharacterStatus>().agility = 5;
+            EnemyChar.GetComponent<CharacterStatus>().agilityMod = 0;
+            EnemyChar.GetComponent<CharacterStatus>().agilityRate = 45;
+
+            EnemyChar.GetComponent<CharacterStatus>().strength = 5;
+            EnemyChar.GetComponent<CharacterStatus>().strengthMod = 0;
+            EnemyChar.GetComponent<CharacterStatus>().strengthRate = 45;
+
+            EnemyChar.GetComponent<CharacterStatus>().skill = 5;
+            EnemyChar.GetComponent<CharacterStatus>().skillMod = 0;
+            EnemyChar.GetComponent<CharacterStatus>().skillRate = 45;
+
+            EnemyChar.GetComponent<CharacterStatus>().healthMax = 15;
+            EnemyChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
+            EnemyChar.GetComponent<CharacterStatus>().healthRate = 45;
+
+            EnemyChar.GetComponent<CharacterStatus>().healthCurrent = 5;
+            EnemyChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
+
+            EnemyChar.GetComponent<CharacterStatus>().moveDistance = 5;
+            EnemyChar.GetComponent<CharacterStatus>().moveDistanceMod = 0;
+
+            EnemyChar.GetComponent<CharacterStatus>().currentLevel = 1;
+            EnemyChar.GetComponent<CharacterStatus>().levelCap = 20;
+            EnemyChar.GetComponent<CharacterStatus>().experience = 0;
+
+            EnemyChar.GetComponent<CharacterStatus>().loyalty = 50;
+            EnemyChar.GetComponent<CharacterStatus>().courage = 50;
+            EnemyChar.GetComponent<CharacterStatus>().greed = 50;
+            EnemyChar.GetComponent<CharacterStatus>().friendship = 50;
+            EnemyChar.GetComponent<CharacterStatus>().patience = 50;
+
+
+            this.GetComponent<EnemyManager>().addEnemy(EnemyChar);
+
+
         }
     }
     public void generateMovementRange(TileBehaviour startTile, int movementRange)

@@ -9,18 +9,45 @@ public class CharacterManager : MonoBehaviour {
     List<GameObject> characterList;
     List<GameObject> characterInstanceList;
     public static CharacterManager instance;
+    private int numActionableCharacters = 0;
+    public int inspectorActionable = 0;
 	// Use this for initialization
 	void Start () {
         instance = this;
+        for (int i = 0; i < characterInstanceList.Count(); i++)
+        {
+            if (characterInstanceList[i].GetComponent<CharacterStatus>().ableToMove)
+                numActionableCharacters++;
+        }
+        inspectorActionable = numActionableCharacters;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (TurnManager.instance.getPhaseStatus() == TurnManager.kPlayer)
+        {
+            if (numActionableCharacters <= 0)
+            {
+                TurnManager.instance.nextPhase();
+                
+                return;
+            }
+            numActionableCharacters = 0;
+            for (int i = 0; i < characterInstanceList.Count(); i++)
+            {
+                if (characterInstanceList[i].GetComponent<CharacterStatus>().ableToMove)
+                    numActionableCharacters++;
+            }
+        }
+        inspectorActionable = numActionableCharacters;
 	}
     public int getCharacterListSize()
     {
         return characterList.Count();
+    }
+    public int getCharacterInstanceListSize()
+    {
+        return characterInstanceList.Count();
     }
     public void generateCharacterList()
     {

@@ -71,13 +71,14 @@ public class CursorMovement : MonoBehaviour {
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
+            GridManager.instance.unitSelected = false;
             GridManager.instance.hideMovementRange();
             if (GridManager.instance.originTileTB != null)
-                GridManager.instance.originTileTB.originTileChanged();
+                GridManager.instance.originTileTB = null;
             if (GridManager.instance.destTileTB != null)
             {
                 GridManager.instance.destTileTB.RemoveHighlight();
-                GridManager.instance.destTileTB.destTileChanged();
+                GridManager.instance.destTileTB = null;
                 
             }
             
@@ -89,7 +90,8 @@ public class CursorMovement : MonoBehaviour {
         tileY = currentTile.gridY;
 
         currentTile.HighlightCursor();
-        currentTile.UnlockTile();
+        if (!currentTile.containsEnemy())
+            currentTile.UnlockTile();
         
     }
     void moveCursor(TileBehaviour tile)

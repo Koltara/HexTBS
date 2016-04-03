@@ -4,6 +4,7 @@ using System.Collections;
 public class CharacterStatus : MonoBehaviour {
     private int slot;
     public static CharacterStatus instance;
+    public bool ableToMove = true;
 
     //Character Properties
     /*

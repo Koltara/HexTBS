@@ -23,9 +23,20 @@ public class TileBehaviour : MonoBehaviour
 
     public GameObject containedCharacter;
     private bool playerSpawnTile = false;
+    private bool enemySpawnTile = false;
+    private bool hasEnemy = false;
 
     //Slightly transparent orange
     Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+
+    public void setEnemy(bool enemy)
+    {
+        hasEnemy = enemy;
+    }
+    public bool containsEnemy()
+    {
+        return hasEnemy;
+    }
 
     public bool getTileStatus()
     {
@@ -35,6 +46,15 @@ public class TileBehaviour : MonoBehaviour
     {
         playerSpawnTile = spawn;
     }
+    public bool getEnemySpawnTile()
+    {
+        return enemySpawnTile;
+    }
+    public void setEnemySpawnTile(bool spawn)
+    {
+        enemySpawnTile = spawn;
+    }
+
 
     public GameObject getContainedCharacter()
     {
@@ -114,10 +134,14 @@ public class TileBehaviour : MonoBehaviour
             if (GridManager.instance.originTileTB != null)
                 GridManager.instance.unitSelected = true;
 
-            tile.Passable = true;
+            //tile.Passable = true;
             if (this.containedCharacter != null)
             {
                 //Space has a character
+                if (GridManager.instance.unitSelected)
+                    return;
+                if (!this.containedCharacter.GetComponent<CharacterStatus>().ableToMove)
+                    return;
                 GridManager.instance.unitSelected = true;
 
                 TileBehaviour originTileTB = GridManager.instance.originTileTB;
@@ -141,6 +165,7 @@ public class TileBehaviour : MonoBehaviour
                     
                     GridManager.instance.destTileTB = this;
                     originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB = this;
+                    originTileTB.containedCharacter.GetComponent<CharacterStatus>().ableToMove = false;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
                     
