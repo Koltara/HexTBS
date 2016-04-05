@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class TileBehaviour : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class TileBehaviour : MonoBehaviour
     private bool playerSpawnTile = false;
     private bool enemySpawnTile = false;
     private bool hasEnemy = false;
+
+    
 
     //Slightly transparent orange
     Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
@@ -68,10 +71,12 @@ public class TileBehaviour : MonoBehaviour
 
     void Update()
     {
+        
         gridX = tile.X + tile.Y / 2;
         gridY = tile.Y;
         //if (this.containedCharacter != null)
         //    this.containedCharacter.transform.position = this.transform.position;
+        
     }
 
     public void changeColor(Color color)
@@ -109,6 +114,25 @@ public class TileBehaviour : MonoBehaviour
     //called every frame when cursor is on this tile
     public void UnlockTile()
     {
+
+        if (this.containedCharacter != null)
+        {
+            GridManager.instance.HealthText.text = "Unit Health: " + containedCharacter.GetComponent<CharacterStatus>().healthCurrent + "/" + containedCharacter.GetComponent<CharacterStatus>().healthMax;
+            GridManager.instance.AccuracyText.text = "Accuracy: " + containedCharacter.GetComponent<CharacterStatus>().getAccuracy();
+            GridManager.instance.EvadeText.text = "Evade: " + containedCharacter.GetComponent<CharacterStatus>().getEvasion();
+            GridManager.instance.AttackPowerText.text = "Attack Power: " + containedCharacter.GetComponent<CharacterStatus>().strength;
+            GridManager.instance.DefenseText.text = "Defense: " + containedCharacter.GetComponent<CharacterStatus>().defense;
+            GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.blue;
+        }
+        else
+        {
+            GridManager.instance.HealthText.text = " - ";
+            GridManager.instance.AccuracyText.text = " - ";
+            GridManager.instance.EvadeText.text = " - ";
+            GridManager.instance.AttackPowerText.text = " - ";
+            GridManager.instance.DefenseText.text = " - ";
+            GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.white;
+        }
         //Toggle impassable
         if (Input.GetKeyUp(KeyCode.A))
         {

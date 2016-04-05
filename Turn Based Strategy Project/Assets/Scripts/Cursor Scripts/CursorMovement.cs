@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CursorMovement : MonoBehaviour {
     public GameObject Hex;
@@ -12,6 +13,11 @@ public class CursorMovement : MonoBehaviour {
     public int tileX;
     public int tileY;
 
+    private float minXCameraRestraint;
+    private float maxXCameraRestraint;
+    private float minYCameraRestraint;
+    private float maxYCameraRestraint;
+
 
     // Use this for initialization
     void Start () {
@@ -23,7 +29,10 @@ public class CursorMovement : MonoBehaviour {
         currentTile = (TileBehaviour)Hex.GetComponent("TileBehaviour");
         currentTile = GridManager.instance.normalizedBoard[new Point (0,0)];
         this.transform.position = GridManager.instance.calcWorldCoord(new Vector2(currentTile.gridX, currentTile.gridY));
-
+        minXCameraRestraint = GridManager.instance.calcWorldCoord(new Vector2(GridManager.instance.normalizedBoard[new Point(8,0)].gridX, GridManager.instance.normalizedBoard[new Point(8, 0)].gridY)).x;
+        maxXCameraRestraint = GridManager.instance.calcWorldCoord(new Vector2(GridManager.instance.normalizedBoard[new Point(GridManager.instance.gridWidthInHexes-8, 0)].gridX, GridManager.instance.normalizedBoard[new Point(GridManager.instance.gridWidthInHexes - 8, 0)].gridY)).x;
+        minYCameraRestraint = GridManager.instance.calcWorldCoord(new Vector2(GridManager.instance.normalizedBoard[new Point(0, 6)].gridX, GridManager.instance.normalizedBoard[new Point(0, 6)].gridY)).y;
+        maxYCameraRestraint = GridManager.instance.calcWorldCoord(new Vector2(GridManager.instance.normalizedBoard[new Point(0, GridManager.instance.gridHeightInHexes-6)].gridX, GridManager.instance.normalizedBoard[new Point(0, GridManager.instance.gridHeightInHexes-6)].gridY)).y;
 
     }
 	
@@ -86,13 +95,26 @@ public class CursorMovement : MonoBehaviour {
         }
 
         Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -8);
+        //Camera.main.transform.position = new Vector3(
+        //    Mathf.Clamp(this.transform.position.x, minXCameraRestraint, maxXCameraRestraint),
+        //    Mathf.Clamp(this.transform.position.y, minYCameraRestraint, maxYCameraRestraint),
+        //    -8);
         tileX = currentTile.gridX;
         tileY = currentTile.gridY;
 
         currentTile.HighlightCursor();
         if (!currentTile.containsEnemy())
             currentTile.UnlockTile();
-        
+        else
+        {
+            GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.red;
+            GridManager.instance.HealthText.text = "Unit Health: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().healthCurrent + "/" + currentTile.containedCharacter.GetComponent<CharacterStatus>().healthMax;
+            GridManager.instance.AccuracyText.text = "Accuracy: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().getAccuracy();
+            GridManager.instance.EvadeText.text = "Evade: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().getEvasion();
+            GridManager.instance.AttackPowerText.text = "Attack Power: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().strength;
+            GridManager.instance.DefenseText.text = "Defense: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().defense;
+        }
+
     }
     void moveCursor(TileBehaviour tile)
     {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour {
 
@@ -30,8 +31,13 @@ public class GridManager : MonoBehaviour {
     public Dictionary<Point, TileBehaviour> normalizedBoard;
 
     public Boolean unitSelected = false;
+    public Text HealthText;
+    public Text AttackPowerText;
+    public Text DefenseText;
+    public Text AccuracyText;
+    public Text EvadeText;
 
-    
+
 
     List<GameObject> path;
     public List<TileBehaviour> possibleMoves;
@@ -220,6 +226,7 @@ public class GridManager : MonoBehaviour {
         instance = this;
         setSizes();
         Instantiate(Cursor);
+        
         cursorScript = Cursor.GetComponent<CursorMovement>();
         createGrid();
         spawnCharacters();
@@ -328,7 +335,7 @@ public class GridManager : MonoBehaviour {
             tempChar.GetComponent<CharacterStatus>().skillMod = 0;
             tempChar.GetComponent<CharacterStatus>().skillRate = 45;
 
-            tempChar.GetComponent<CharacterStatus>().defense = 5;
+            tempChar.GetComponent<CharacterStatus>().defense = 4;
             tempChar.GetComponent<CharacterStatus>().defenseMod = 0;
             tempChar.GetComponent<CharacterStatus>().defenseRate = 45;
 
@@ -381,7 +388,7 @@ public class GridManager : MonoBehaviour {
             EnemyChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
             EnemyChar.GetComponent<CharacterStatus>().healthRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().defense = 2;
+            EnemyChar.GetComponent<CharacterStatus>().defense = 3;
             EnemyChar.GetComponent<CharacterStatus>().defenseMod = 0;
             EnemyChar.GetComponent<CharacterStatus>().defenseRate = 45;
 

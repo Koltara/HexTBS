@@ -77,6 +77,7 @@ public class CharacterStatus : MonoBehaviour {
         evasion = 15 + (agility * 2);
         if (healthCurrent <= 0)
         {
+            
             for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
             {
                 if (this.gameObject == CharacterManager.instance.getCharacterInstance(i))
@@ -91,7 +92,8 @@ public class CharacterStatus : MonoBehaviour {
                     EnemyManager.instance.removeEnemyInstance(this.gameObject);
                 }
             }
-            Destroy(this.gameObject);
+            
+            this.gameObject.SetActive(false);
         }
 	}
     public int getAccuracy()
