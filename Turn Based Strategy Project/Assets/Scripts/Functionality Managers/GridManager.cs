@@ -405,7 +405,7 @@ public class GridManager : MonoBehaviour {
             EnemyChar.GetComponent<CharacterStatus>().loyalty = 50;
             EnemyChar.GetComponent<CharacterStatus>().courage = 50;
             EnemyChar.GetComponent<CharacterStatus>().greed = 50;
-            EnemyChar.GetComponent<CharacterStatus>().friendship = 50;
+            EnemyChar.GetComponent<CharacterStatus>().friendship = -50;
             EnemyChar.GetComponent<CharacterStatus>().patience = 50;
 
 

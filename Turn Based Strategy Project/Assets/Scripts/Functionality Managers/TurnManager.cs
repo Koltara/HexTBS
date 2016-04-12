@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿
+
+using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+
 
 
 
@@ -14,6 +17,7 @@ public class TurnManager : MonoBehaviour {
     public const int kPlayer = 0;
     public const int kEnemy = 1;
     public const int kNeutral = 2;
+    public const int kLoyaltyMod = 10;
 
     public static TurnManager instance;
 
@@ -74,16 +78,21 @@ public class TurnManager : MonoBehaviour {
     {
         //Initiator Attacks
         int hitRoll = (int)(UnityEngine.Random.value * 100);
+        int netDamageInitiator = 0;
+        int netDamageTarget = 0;
+
         if (hitRoll < (initiator.GetComponent<CharacterStatus>().getAccuracy() - target.GetComponent<CharacterStatus>().getEvasion()))
         {
             
             int tempDamage = initiator.GetComponent<CharacterStatus>().strength;
             int tempDefense = target.GetComponent<CharacterStatus>().defense;
-            int netDamage = (tempDamage - tempDefense);
+            netDamageInitiator = (tempDamage - tempDefense);
+
+            
             if (tempDamage > tempDefense)
             {
-                target.GetComponent<CharacterStatus>().healthCurrent -= netDamage;
-                Debug.Log(initiator + "Hit a " + hitRoll + " for " + netDamage);
+                target.GetComponent<CharacterStatus>().healthCurrent -= netDamageInitiator;
+                Debug.Log(initiator + "Hit a " + hitRoll + " for " + netDamageInitiator);
             }
             else Debug.Log(initiator + "Hit a " + hitRoll + " for " + 0);
             if (target.GetComponent<CharacterStatus>().healthCurrent <= 0)
@@ -99,11 +108,11 @@ public class TurnManager : MonoBehaviour {
         {
             int tempDamage = target.GetComponent<CharacterStatus>().strength;
             int tempDefense = initiator.GetComponent<CharacterStatus>().defense;
-            int netDamage = (tempDamage - tempDefense);
+            netDamageTarget = (tempDamage - tempDefense);
             if (tempDamage > tempDefense)
             { 
-                initiator.GetComponent<CharacterStatus>().healthCurrent -= (tempDamage - tempDefense);
-                Debug.Log(target + "Hit a " + hitRoll + " for " + netDamage);
+                initiator.GetComponent<CharacterStatus>().healthCurrent -= netDamageTarget;
+                Debug.Log(target + "Hit a " + hitRoll + " for " + netDamageTarget);
             }
                 else Debug.Log(target + "Hit a " + hitRoll + " for " + 0);
             if (initiator.GetComponent<CharacterStatus>().healthCurrent <= 0)
@@ -112,6 +121,75 @@ public class TurnManager : MonoBehaviour {
             }
         }
         else Debug.Log(target + "Missed with a " + hitRoll);
+
+        if (netDamageTarget > netDamageInitiator)
+        {
+            for (int i = 0; i < this.gameObject.GetComponent<CharacterManager>().getCharacterInstanceListSize(); i++)
+            {
+
+                if (initiator == CharacterManager.instance.getCharacterInstance(i))
+                {
+                    int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
+                    int net = (int)(3 * (loyal / 100.000) * netDamageTarget);
+                    Debug.Log("Hi");
+                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
+                    Debug.Log(net);
+                    initiator.GetComponent<CharacterStatus>().friendship -= net;
+                    target.GetComponent<CharacterStatus>().friendship += net;
+                }
+
+            }
+            for (int i = 0; i < this.gameObject.GetComponent<EnemyManager>().getEnemyInstanceListSize(); i++)
+            {
+
+                if (initiator == EnemyManager.instance.getEnemyInstance(i))
+                {
+                    int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
+                    int net = (int)(3 * (loyal / 100.000) * netDamageTarget);
+                    Debug.Log("Hi");
+                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
+                    Debug.Log(net);
+                    initiator.GetComponent<CharacterStatus>().friendship += net;
+                    target.GetComponent<CharacterStatus>().friendship -= net;
+                    break;
+                }
+            }
+
+        } else if (netDamageTarget < netDamageInitiator)
+        {
+            for (int i = 0; i < this.gameObject.GetComponent<CharacterManager>().getCharacterInstanceListSize(); i++)
+            {
+
+                if (initiator == CharacterManager.instance.getCharacterInstance(i))
+                {
+                    int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
+                    int net = (int)(3 * (loyal / 100.000) * netDamageInitiator);
+                    Debug.Log("Hi");
+                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
+                    Debug.Log(net);
+                    initiator.GetComponent<CharacterStatus>().friendship += net;
+                    target.GetComponent<CharacterStatus>().friendship -= net;
+                    break;
+                }
+            }
+            for (int i = 0; i < this.gameObject.GetComponent<EnemyManager>().getEnemyInstanceListSize(); i++)
+            {
+
+                if (initiator == EnemyManager.instance.getEnemyInstance(i))
+                {
+                    int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
+                    int net = (int)(3 * (loyal / 100.000) * netDamageInitiator);
+                    Debug.Log("Hi");
+                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
+                    
+                    Debug.Log(net);
+                    initiator.GetComponent<CharacterStatus>().friendship -= net;
+                    target.GetComponent<CharacterStatus>().friendship += net;
+                    break;
+                }
+            }
+            
+        }
 
     }
 }
