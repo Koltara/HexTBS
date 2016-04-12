@@ -5,6 +5,24 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+/*
+ * @author koltara
+ * This class handles turn management as well as the combat functionality
+ * 
+ * nextPhase() - Cycles to the next phase of the game once a faction has moved all of their units
+ * Player Phase -> Enemy Phase -> Neutral Phase
+ * 
+ * initiateCombat() - Initiates combat between two units. Each is given an opportunity to attack, provided the initial attack does not kill the target.
+ * After combat, the units undergo friendship modification depending on the net damage dealt/received during this combat.
+ * 
+ * Friendship is gained - When the unit deals more damage to the enemy than they received.
+ * Friendship is lost - When the unit receives more damage than they dealt.
+ * Nothing is happens - When the net damage is equal.
+ * 
+ * Friendship lost is a function of their loyalty value.
+ * 
+ * 
+ */
 
 
 
@@ -122,6 +140,14 @@ public class TurnManager : MonoBehaviour {
         }
         else Debug.Log(target + "Missed with a " + hitRoll);
 
+        //Friendship Modifications
+        //Loyalty
+
+        //If retaliation damage is higher than the initiators damage, reduce friendship for the initiator and increase for the target.
+
+        GameObject moveToEnemy;
+        GameObject moveToAlly;
+        
         if (netDamageTarget > netDamageInitiator)
         {
             for (int i = 0; i < this.gameObject.GetComponent<CharacterManager>().getCharacterInstanceListSize(); i++)
@@ -131,11 +157,14 @@ public class TurnManager : MonoBehaviour {
                 {
                     int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
                     int net = (int)(3 * (loyal / 100.000) * netDamageTarget);
-                    Debug.Log("Hi");
-                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
-                    Debug.Log(net);
                     initiator.GetComponent<CharacterStatus>().friendship -= net;
-                    target.GetComponent<CharacterStatus>().friendship += net;
+                    target.GetComponent<CharacterStatus>().friendship -= net;
+
+                    if (initiator.GetComponent<CharacterStatus>().friendship <= 0)
+                    {
+                        moveToEnemy = initiator;
+                    }
+                    break;
                 }
 
             }
@@ -146,11 +175,13 @@ public class TurnManager : MonoBehaviour {
                 {
                     int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
                     int net = (int)(3 * (loyal / 100.000) * netDamageTarget);
-                    Debug.Log("Hi");
-                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
-                    Debug.Log(net);
                     initiator.GetComponent<CharacterStatus>().friendship += net;
-                    target.GetComponent<CharacterStatus>().friendship -= net;
+                    target.GetComponent<CharacterStatus>().friendship += net;
+
+                    if (initiator.GetComponent<CharacterStatus>().friendship >= 0)
+                    {
+                        moveToAlly = initiator;
+                    }
                     break;
                 }
             }
@@ -164,11 +195,13 @@ public class TurnManager : MonoBehaviour {
                 {
                     int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
                     int net = (int)(3 * (loyal / 100.000) * netDamageInitiator);
-                    Debug.Log("Hi");
-                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
-                    Debug.Log(net);
                     initiator.GetComponent<CharacterStatus>().friendship += net;
-                    target.GetComponent<CharacterStatus>().friendship -= net;
+                    target.GetComponent<CharacterStatus>().friendship += net;
+
+                    if (target.GetComponent<CharacterStatus>().friendship >= 0)
+                    {
+                        moveToAlly = target;
+                    }
                     break;
                 }
             }
@@ -179,17 +212,29 @@ public class TurnManager : MonoBehaviour {
                 {
                     int loyal = initiator.GetComponent<CharacterStatus>().loyalty;
                     int net = (int)(3 * (loyal / 100.000) * netDamageInitiator);
-                    Debug.Log("Hi");
-                    Debug.Log(initiator.GetComponent<CharacterStatus>().friendship);
-                    
-                    Debug.Log(net);
                     initiator.GetComponent<CharacterStatus>().friendship -= net;
                     target.GetComponent<CharacterStatus>().friendship += net;
+
+                    if (target.GetComponent<CharacterStatus>().friendship <= 0)
+                    {
+                        moveToEnemy = target;
+                    }
                     break;
                 }
             }
             
         }
+        if (moveToEnemy != null)
+        {
+            CharacterManager.instance.removeCharacterInstance(moveToEnemy);
+            EnemyManager.instance.addCharacterInstance(moveToEnemy);
+        }
+        if (moveToAlly != null)
+        {
+            CharacterManager.instance.addCharacterInstance(moveToAlly);
+            EnemyManager.instance.removeCharacterInstance(moveToAlly);
+        }
+
 
     }
 }
