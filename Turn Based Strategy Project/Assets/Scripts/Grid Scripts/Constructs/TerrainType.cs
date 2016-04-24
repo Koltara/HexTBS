@@ -9,13 +9,15 @@ public struct TerrainType
     public int evadeBonus;
     public int defenseBonus;
     public Color tileColor;
+
+    
     
     public TerrainType(int type)
     {
         cost = 1;
         evadeBonus = 0;
         defenseBonus = 0;
-        tileColor = Color.white;
+        tileColor = TileBehaviour.lightGreen;
 
         switch (type)
         {
@@ -23,13 +25,13 @@ public struct TerrainType
                 cost = 1;
                 evadeBonus = 0;
                 defenseBonus = 0;
-                tileColor = Color.white;
+                tileColor = TileBehaviour.lightGreen;
                 break;
             case (int)TileBehaviour.TerrainTypes.kForest:
                 cost = 2;
                 evadeBonus = 10;
                 defenseBonus = 1;
-                tileColor = Color.green;
+                tileColor = TileBehaviour.darkGreen;
                 break;
             case (int)TileBehaviour.TerrainTypes.kHill:
                 cost = 3;
@@ -41,7 +43,7 @@ public struct TerrainType
                 cost = 1;
                 evadeBonus = 0;
                 defenseBonus = 0;
-                tileColor = Color.white;
+                tileColor = TileBehaviour.lightGreen;
                 break;
 
         }

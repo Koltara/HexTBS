@@ -99,54 +99,59 @@ public class TurnManager : MonoBehaviour {
         int netDamageInitiator = 0;
         int netDamageTarget = 0;
 
+        
+
         if (hitRoll < (initiator.GetComponent<CharacterStatus>().getAccuracy() - target.GetComponent<CharacterStatus>().getEvasion()))
         {
-            
-            int tempDamage = initiator.GetComponent<CharacterStatus>().strength;
-            int tempDefense = target.GetComponent<CharacterStatus>().defense;
+
+            int tempDamage = initiator.GetComponent<CharacterStatus>().strength + initiator.GetComponent<CharacterStatus>().strengthMod;
+            int tempDefense = target.GetComponent<CharacterStatus>().defense + target.GetComponent<CharacterStatus>().defenseMod;
             netDamageInitiator = (tempDamage - tempDefense);
 
             
             if (tempDamage > tempDefense)
             {
                 target.GetComponent<CharacterStatus>().healthCurrent -= netDamageInitiator;
+                
+                target.GetComponent<CharacterStatus>().InitiateCombatText("-" + netDamageInitiator);
                 Debug.Log(initiator + "Hit a " + hitRoll + " for " + netDamageInitiator);
             }
-            else Debug.Log(initiator + "Hit a " + hitRoll + " for " + 0);
+            else target.GetComponent<CharacterStatus>().InitiateCombatText("-" + 0);
             if (target.GetComponent<CharacterStatus>().healthCurrent <= 0)
             {
                 return;
             }
-            
-        } else Debug.Log(initiator + "Missed with a " + hitRoll);
+
+        }
+        else target.GetComponent<CharacterStatus>().InitiateCombatText("Miss");
 
         //Target Retaliation
         hitRoll = (int)(UnityEngine.Random.value * 100);
         if (hitRoll < (target.GetComponent<CharacterStatus>().getAccuracy() - initiator.GetComponent<CharacterStatus>().getEvasion()))
         {
-            int tempDamage = target.GetComponent<CharacterStatus>().strength;
-            int tempDefense = initiator.GetComponent<CharacterStatus>().defense;
+            int tempDamage = target.GetComponent<CharacterStatus>().strength + target.GetComponent<CharacterStatus>().strengthMod;
+            int tempDefense = initiator.GetComponent<CharacterStatus>().defense + initiator.GetComponent<CharacterStatus>().defenseMod;
             netDamageTarget = (tempDamage - tempDefense);
             if (tempDamage > tempDefense)
             { 
                 initiator.GetComponent<CharacterStatus>().healthCurrent -= netDamageTarget;
-                Debug.Log(target + "Hit a " + hitRoll + " for " + netDamageTarget);
+                initiator.GetComponent<CharacterStatus>().InitiateCombatText("-" + netDamageTarget);
             }
-                else Debug.Log(target + "Hit a " + hitRoll + " for " + 0);
+            else initiator.GetComponent<CharacterStatus>().InitiateCombatText("-" + 0);
             if (initiator.GetComponent<CharacterStatus>().healthCurrent <= 0)
             {
                 return;
             }
         }
-        else Debug.Log(target + "Missed with a " + hitRoll);
+        else initiator.GetComponent<CharacterStatus>().InitiateCombatText("Miss");
 
         //Friendship Modifications
         //Loyalty
 
         //If retaliation damage is higher than the initiators damage, reduce friendship for the initiator and increase for the target.
 
-        GameObject moveToEnemy;
-        GameObject moveToAlly;
+        GameObject moveToEnemy = null;
+        GameObject moveToAlly = null;
         
         if (netDamageTarget > netDamageInitiator)
         {
@@ -227,12 +232,12 @@ public class TurnManager : MonoBehaviour {
         if (moveToEnemy != null)
         {
             CharacterManager.instance.removeCharacterInstance(moveToEnemy);
-            EnemyManager.instance.addCharacterInstance(moveToEnemy);
+            EnemyManager.instance.addEnemyInstance(moveToEnemy);
         }
         if (moveToAlly != null)
         {
             CharacterManager.instance.addCharacterInstance(moveToAlly);
-            EnemyManager.instance.removeCharacterInstance(moveToAlly);
+            EnemyManager.instance.removeEnemyInstance(moveToAlly);
         }
 
 

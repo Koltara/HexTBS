@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CharacterStatus : MonoBehaviour {
     private int slot;
@@ -65,33 +66,109 @@ public class CharacterStatus : MonoBehaviour {
     public int patience;
     public int friendship;
 
+    public int allegiance = 0;
+
+    public GameObject CombatText;
+    public Canvas UnitCanvas;
+
+    Canvas canvasInstance = null;
+
+    public void InitiateCombatText(string text)
+    {
+        GameObject temp = Instantiate(CombatText) as GameObject;
+        RectTransform tempRect = temp.GetComponent<RectTransform>();
+
+        temp.transform.SetParent(canvasInstance.transform);
+
+        tempRect.transform.localPosition = CombatText.transform.localPosition;
+        tempRect.transform.localScale = CombatText.transform.localScale;
+        tempRect.transform.localRotation = CombatText.transform.localRotation;
+
+        temp.GetComponent<Text>().text = text;
+        Destroy(temp.gameObject, 2);
+    }
 
 
 	void Start () {
         instance = this;
+
+        
+
+        canvasInstance = Instantiate(UnitCanvas);
+        canvasInstance.transform.SetParent(this.gameObject.transform);
+        canvasInstance.transform.localPosition = transform.localPosition;
+        canvasInstance.transform.localRotation = transform.localRotation;
+        canvasInstance.transform.localScale = transform.localScale;
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+        canvasInstance.transform.localPosition = this.gameObject.transform.localPosition;
+        canvasInstance.transform.localRotation = this.gameObject.transform.localRotation;
+        canvasInstance.transform.localScale = this.gameObject.transform.localScale;
+
+        int tempEvadeBonus = 0;
+
+        for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
+        {
+            if (this.gameObject == CharacterManager.instance.getCharacterInstance(i))
+            {
+                this.allegiance = TurnManager.kPlayer;
+            }
+            
+        }
+        for (int i = 0; i < EnemyManager.instance.getEnemyInstanceListSize(); i++)
+        {
+            if (this.gameObject == EnemyManager.instance.getEnemyInstance(i))
+            {
+                this.allegiance = TurnManager.kEnemy;
+            }
+
+        }
+
+        if (allegiance == TurnManager.kPlayer)
+        {
+
+            tempEvadeBonus = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.evadeBonus;
+            defenseMod = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.defenseBonus;
+        }
+        else if (allegiance == TurnManager.kEnemy)
+        {
+            tempEvadeBonus = GetComponent<EnemyMovementController>().currentTB.terrainType.evadeBonus;
+            defenseMod = GetComponent<EnemyMovementController>().currentTB.terrainType.defenseBonus;
+        }
+
         accuracy = 80 + (skill * 2);
-        evasion = 15 + (agility * 2);
+        evasion = 15 + (agility * 2) + tempEvadeBonus;
+
+
+        
+
         if (healthCurrent <= 0)
         {
-            
-            for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
+            if (allegiance == TurnManager.kPlayer)
             {
-                if (this.gameObject == CharacterManager.instance.getCharacterInstance(i))
-                {
-                    CharacterManager.instance.removeCharacterInstance(this.gameObject);
-                }
-            }
-            for (int i = 0; i < EnemyManager.instance.getEnemyInstanceListSize(); i++)
+                CharacterManager.instance.removeCharacterInstance(this.gameObject);
+            } else if (allegiance == TurnManager.kEnemy)
             {
-                if (this.gameObject == EnemyManager.instance.getEnemyInstance(i))
-                {
-                    EnemyManager.instance.removeEnemyInstance(this.gameObject);
-                }
+                EnemyManager.instance.removeEnemyInstance(this.gameObject);
             }
+            //for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
+            //{
+            //    if (this.gameObject == CharacterManager.instance.getCharacterInstance(i))
+            //    {
+            //        CharacterManager.instance.removeCharacterInstance(this.gameObject);
+            //    }
+            //}
+            //for (int i = 0; i < EnemyManager.instance.getEnemyInstanceListSize(); i++)
+            //{
+            //    if (this.gameObject == EnemyManager.instance.getEnemyInstance(i))
+            //    {
+            //        EnemyManager.instance.removeEnemyInstance(this.gameObject);
+            //    }
+            //}
             
             this.gameObject.SetActive(false);
         }

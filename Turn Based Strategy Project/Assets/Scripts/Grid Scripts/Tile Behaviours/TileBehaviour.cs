@@ -30,7 +30,9 @@ public class TileBehaviour : MonoBehaviour
     
 
     //Slightly transparent orange
-    Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+    public static Color orange = new Color(255f / 255f, 127f / 255f, 0, 127f / 255f);
+    public static Color lightGreen = new Color(0f / 255f, 255f / 255f, 86f/255f, 255f / 255f);
+    public static Color darkGreen = new Color(7f / 255f, 169f / 255f, 15f / 255f, 255f / 255f);
 
     public void setEnemy(bool enemy)
     {
@@ -87,6 +89,10 @@ public class TileBehaviour : MonoBehaviour
         GetComponent<Renderer>().material = OpaqueMaterial;
         GetComponent<Renderer>().material.color = color;
     }
+    void Start()
+    {
+        
+    }
 
     
     public void HighlightCursor()
@@ -120,8 +126,8 @@ public class TileBehaviour : MonoBehaviour
             GridManager.instance.HealthText.text = "Unit Health: " + containedCharacter.GetComponent<CharacterStatus>().healthCurrent + "/" + containedCharacter.GetComponent<CharacterStatus>().healthMax;
             GridManager.instance.AccuracyText.text = "Accuracy: " + containedCharacter.GetComponent<CharacterStatus>().getAccuracy();
             GridManager.instance.EvadeText.text = "Evade: " + containedCharacter.GetComponent<CharacterStatus>().getEvasion();
-            GridManager.instance.AttackPowerText.text = "Attack Power: " + containedCharacter.GetComponent<CharacterStatus>().strength;
-            GridManager.instance.DefenseText.text = "Defense: " + containedCharacter.GetComponent<CharacterStatus>().defense;
+            GridManager.instance.AttackPowerText.text = "Attack Power: " + (containedCharacter.GetComponent<CharacterStatus>().strength + containedCharacter.GetComponent<CharacterStatus>().strengthMod);
+            GridManager.instance.DefenseText.text = "Defense: " + (containedCharacter.GetComponent<CharacterStatus>().defense + containedCharacter.GetComponent<CharacterStatus>().defenseMod);
             GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.blue;
         }
         else

@@ -135,6 +135,7 @@ public class GridManager : MonoBehaviour {
 
                 tb.GetComponent<Renderer>().material = tb.OpaqueMaterial;
                 tb.GetComponent<Renderer>().material.color = tb.terrainType.tileColor;
+                
                 tb.setContainedCharacter(null);
 
                 if (x == 0 && y == 0)
@@ -264,18 +265,18 @@ public class GridManager : MonoBehaviour {
 
                 if (tempTB.getTileStatus())
                 {
-                    GameObject charInstance;
+                    //GameObject charInstance;
                     if (characterListPosition < this.GetComponent<CharacterManager>().getCharacterListSize())
                     {
                         Debug.Log("Generated Character at: " + characterListPosition);
-                        charInstance = Instantiate(tempCharacter);
-                        tempTB.setContainedCharacter(charInstance);
+                        
+                        tempTB.setContainedCharacter(tempCharacter);
 
-                        charInstance.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
-                        charInstance.transform.position = calcWorldCoord(new Vector2(i, j));
-                        charInstance.name = tempCharacter.GetComponent<CharacterStatus>().characterName;
+                        tempCharacter.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
+                        tempCharacter.transform.position = calcWorldCoord(new Vector2(i, j));
+                        tempCharacter.name = tempCharacter.GetComponent<CharacterStatus>().characterName;
 
-                        this.GetComponent<CharacterManager>().addCharacterInstance(charInstance);
+                        this.GetComponent<CharacterManager>().addCharacterInstance(tempCharacter);
                         characterListPosition++;
                     }
                 }
@@ -295,19 +296,20 @@ public class GridManager : MonoBehaviour {
 
                 if (tempTB.getEnemySpawnTile())
                 {
-                    GameObject enemyInstance;
+                    //GameObject enemyInstance;
                     if (enemyListPosition < this.GetComponent<EnemyManager>().getEnemyListSize())
                     {
                         
-                        enemyInstance = Instantiate(tempEnemy);
-                        tempTB.setContainedCharacter(enemyInstance);
+                        
+                        tempTB.setContainedCharacter(tempEnemy);
                         tempTB.tile.Passable = false;
                         tempTB.setEnemy(true);
 
-                        enemyInstance.GetComponent<EnemyMovementController>().currentTB = tempTB;
-                        enemyInstance.transform.position = calcWorldCoord(new Vector2(i, j));
+                        tempEnemy.GetComponent<EnemyMovementController>().currentTB = tempTB;
+                        tempEnemy.transform.position = calcWorldCoord(new Vector2(i, j));
+                        tempEnemy.name = tempEnemy.GetComponent<CharacterStatus>().characterName;
 
-                        this.GetComponent<EnemyManager>().addEnemyInstance(enemyInstance);
+                        this.GetComponent<EnemyManager>().addEnemyInstance(tempEnemy);
                         enemyListPosition++;
                     }
                 }
@@ -318,7 +320,7 @@ public class GridManager : MonoBehaviour {
     {
         for (int i = 0; i < size; i++)
         {
-            GameObject tempChar = PlayerChar;
+            GameObject tempChar = Instantiate(PlayerChar);
 
             tempChar.GetComponent<CharacterStatus>().characterName = "";
             tempChar.GetComponent<CharacterStatus>().characterName = "Player Unit " + (i+1);
@@ -369,47 +371,48 @@ public class GridManager : MonoBehaviour {
     {
         for (int i = 0; i < size; i++)
         {
-            //GameObject tempCharInstance;
-            EnemyChar.GetComponent<CharacterStatus>().characterName = "Enemy Unit " + (i + 1);
+            GameObject tempEnemy = Instantiate(EnemyChar);
 
-            EnemyChar.GetComponent<CharacterStatus>().agility = 5;
-            EnemyChar.GetComponent<CharacterStatus>().agilityMod = 0;
-            EnemyChar.GetComponent<CharacterStatus>().agilityRate = 45;
+            tempEnemy.GetComponent<CharacterStatus>().characterName = "Enemy Unit " + (i + 1);
 
-            EnemyChar.GetComponent<CharacterStatus>().strength = 5;
-            EnemyChar.GetComponent<CharacterStatus>().strengthMod = 0;
-            EnemyChar.GetComponent<CharacterStatus>().strengthRate = 45;
+            tempEnemy.GetComponent<CharacterStatus>().agility = 5;
+            tempEnemy.GetComponent<CharacterStatus>().agilityMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().agilityRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().skill = 5;
-            EnemyChar.GetComponent<CharacterStatus>().skillMod = 0;
-            EnemyChar.GetComponent<CharacterStatus>().skillRate = 45;
+            tempEnemy.GetComponent<CharacterStatus>().strength = 5;
+            tempEnemy.GetComponent<CharacterStatus>().strengthMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().strengthRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().healthMax = 15;
-            EnemyChar.GetComponent<CharacterStatus>().healthMaxMod = 0;
-            EnemyChar.GetComponent<CharacterStatus>().healthRate = 45;
+            tempEnemy.GetComponent<CharacterStatus>().skill = 5;
+            tempEnemy.GetComponent<CharacterStatus>().skillMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().skillRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().defense = 3;
-            EnemyChar.GetComponent<CharacterStatus>().defenseMod = 0;
-            EnemyChar.GetComponent<CharacterStatus>().defenseRate = 45;
+            tempEnemy.GetComponent<CharacterStatus>().healthMax = 15;
+            tempEnemy.GetComponent<CharacterStatus>().healthMaxMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().healthRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().healthCurrent = 15;
-            EnemyChar.GetComponent<CharacterStatus>().healthCurrentMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().defense = 3;
+            tempEnemy.GetComponent<CharacterStatus>().defenseMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().defenseRate = 45;
 
-            EnemyChar.GetComponent<CharacterStatus>().moveDistance = 5;
-            EnemyChar.GetComponent<CharacterStatus>().moveDistanceMod = 0;
+            tempEnemy.GetComponent<CharacterStatus>().healthCurrent = 15;
+            tempEnemy.GetComponent<CharacterStatus>().healthCurrentMod = 0;
 
-            EnemyChar.GetComponent<CharacterStatus>().currentLevel = 1;
-            EnemyChar.GetComponent<CharacterStatus>().levelCap = 20;
-            EnemyChar.GetComponent<CharacterStatus>().experience = 0;
+            tempEnemy.GetComponent<CharacterStatus>().moveDistance = 5;
+            tempEnemy.GetComponent<CharacterStatus>().moveDistanceMod = 0;
 
-            EnemyChar.GetComponent<CharacterStatus>().loyalty = 50;
-            EnemyChar.GetComponent<CharacterStatus>().courage = 50;
-            EnemyChar.GetComponent<CharacterStatus>().greed = 50;
-            EnemyChar.GetComponent<CharacterStatus>().friendship = -50;
-            EnemyChar.GetComponent<CharacterStatus>().patience = 50;
+            tempEnemy.GetComponent<CharacterStatus>().currentLevel = 1;
+            tempEnemy.GetComponent<CharacterStatus>().levelCap = 20;
+            tempEnemy.GetComponent<CharacterStatus>().experience = 0;
+
+            tempEnemy.GetComponent<CharacterStatus>().loyalty = 50;
+            tempEnemy.GetComponent<CharacterStatus>().courage = 50;
+            tempEnemy.GetComponent<CharacterStatus>().greed = 50;
+            tempEnemy.GetComponent<CharacterStatus>().friendship = -50;
+            tempEnemy.GetComponent<CharacterStatus>().patience = 50;
 
 
-            this.GetComponent<EnemyManager>().addEnemy(EnemyChar);
+            this.GetComponent<EnemyManager>().addEnemy(tempEnemy);
 
 
         }
