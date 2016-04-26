@@ -107,12 +107,18 @@ public class CursorMovement : MonoBehaviour {
             currentTile.UnlockTile();
         else
         {
+
             GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.red;
             GridManager.instance.HealthText.text = "Unit Health: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().healthCurrent + "/" + currentTile.containedCharacter.GetComponent<CharacterStatus>().healthMax;
             GridManager.instance.AccuracyText.text = "Accuracy: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().getAccuracy();
             GridManager.instance.EvadeText.text = "Evade: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().getEvasion();
             GridManager.instance.AttackPowerText.text = "Attack Power: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().strength;
             GridManager.instance.DefenseText.text = "Defense: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().defense;
+
+            GridManager.instance.DefenseBonusText.text = "Defense: " + currentTile.terrainType.defenseBonus;
+            GridManager.instance.EvadeBonusText.text = "Evade: " + currentTile.terrainType.evadeBonus;
+            GridManager.instance.TerrainNameText.text = "Terrain: " + currentTile.terrainType.name;
+            
         }
 
     }

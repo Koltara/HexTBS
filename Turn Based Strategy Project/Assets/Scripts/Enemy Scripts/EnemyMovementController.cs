@@ -46,6 +46,25 @@ public class EnemyMovementController: MonoBehaviour
         if (currentTB != null)
             this.gameObject.transform.position = GridManager.instance.calcWorldCoord(new Vector2(currentTB.gridX, currentTB.gridY));
     }
+    IEnumerator enemyAction()
+    {
+        yield return new WaitForSeconds(2);
+        foreach (Tile tile in this.currentTB.tile.Neighbours)
+        {
+            TileBehaviour tb = GridManager.instance.board[tile.Location];
+            for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
+            {
+                if (CharacterManager.instance.getCharacterInstance(i) == tb.containedCharacter)
+                {
+                    TurnManager.instance.initiateCombat(this.gameObject, tb.containedCharacter);
+                    Debug.Log("Fighting " + CharacterManager.instance.getCharacterInstance(i));
+                    this.GetComponent<CharacterStatus>().ableToMove = false;
+                    break;
+                }
+            }
+            break;
+        }
+    }
     public void MoveTo(TileBehaviour destTile)
     {
         currentTB = destTile;

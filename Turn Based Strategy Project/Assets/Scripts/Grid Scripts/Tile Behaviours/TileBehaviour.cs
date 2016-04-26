@@ -139,6 +139,9 @@ public class TileBehaviour : MonoBehaviour
             GridManager.instance.DefenseText.text = " - ";
             GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.white;
         }
+        GridManager.instance.DefenseBonusText.text = "Defense: " + this.terrainType.defenseBonus;
+        GridManager.instance.EvadeBonusText.text = "Evade: " + this.terrainType.evadeBonus;
+        GridManager.instance.TerrainNameText.text = "Terrain: " + this.terrainType.name;
         //Toggle impassable
         if (Input.GetKeyUp(KeyCode.A))
         {

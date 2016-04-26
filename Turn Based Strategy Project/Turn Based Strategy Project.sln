@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turn Based Strategy Project.CSharp.Plugins", "Turn Based Strategy Project.CSharp.Plugins.csproj", "{819508EA-8B56-5624-3B7B-D0B555F0ADC0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turn Based Strategy Project.CSharp", "Turn Based Strategy Project.CSharp.csproj", "{E1FD8392-5DBF-D886-352C-D0164C0ECDCA}"

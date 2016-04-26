@@ -81,8 +81,9 @@ public class CharacterStatus : MonoBehaviour {
         temp.transform.SetParent(canvasInstance.transform);
 
         tempRect.transform.localPosition = CombatText.transform.localPosition;
-        tempRect.transform.localScale = CombatText.transform.localScale;
+        //tempRect.transform.localScale = CombatText.transform.localScale;
         tempRect.transform.localRotation = CombatText.transform.localRotation;
+        tempRect.transform.localPosition = new Vector3(0, 3f, 0);
 
         temp.GetComponent<Text>().text = text;
         Destroy(temp.gameObject, 2);
@@ -96,18 +97,18 @@ public class CharacterStatus : MonoBehaviour {
 
         canvasInstance = Instantiate(UnitCanvas);
         canvasInstance.transform.SetParent(this.gameObject.transform);
-        canvasInstance.transform.localPosition = transform.localPosition;
-        canvasInstance.transform.localRotation = transform.localRotation;
-        canvasInstance.transform.localScale = transform.localScale;
+        //canvasInstance.transform.localPosition = transform.localPosition;
+        //canvasInstance.transform.localRotation = transform.localRotation;
+        //canvasInstance.transform.localScale = transform.localScale;
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        canvasInstance.transform.localPosition = this.gameObject.transform.localPosition;
+        canvasInstance.transform.localPosition = new Vector3(0, 0, 0);
         canvasInstance.transform.localRotation = this.gameObject.transform.localRotation;
-        canvasInstance.transform.localScale = this.gameObject.transform.localScale;
+        //canvasInstance.transform.localScale = this.gameObject.transform.localScale;
 
         int tempEvadeBonus = 0;
 
@@ -133,11 +134,13 @@ public class CharacterStatus : MonoBehaviour {
 
             tempEvadeBonus = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.evadeBonus;
             defenseMod = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.defenseBonus;
+            this.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
         }
         else if (allegiance == TurnManager.kEnemy)
         {
             tempEvadeBonus = GetComponent<EnemyMovementController>().currentTB.terrainType.evadeBonus;
             defenseMod = GetComponent<EnemyMovementController>().currentTB.terrainType.defenseBonus;
+            this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
         }
 
         accuracy = 80 + (skill * 2);
@@ -150,10 +153,20 @@ public class CharacterStatus : MonoBehaviour {
         {
             if (allegiance == TurnManager.kPlayer)
             {
+                TileBehaviour tempTB = this.gameObject.GetComponent<SimpleCharacterMovement>().currentTB;
+
                 CharacterManager.instance.removeCharacterInstance(this.gameObject);
+
+                tempTB.setContainedCharacter(null);
+                Destroy(this.gameObject);
             } else if (allegiance == TurnManager.kEnemy)
             {
+                TileBehaviour tempTB = this.gameObject.GetComponent<EnemyMovementController>().currentTB;
                 EnemyManager.instance.removeEnemyInstance(this.gameObject);
+                tempTB.setContainedCharacter(null);
+                tempTB.tile.Passable = true;
+                tempTB.setEnemy(false);
+                Destroy(this.gameObject);
             }
             //for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
             //{

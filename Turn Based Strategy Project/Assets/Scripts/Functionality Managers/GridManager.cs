@@ -36,6 +36,10 @@ public class GridManager : MonoBehaviour {
     public Text DefenseText;
     public Text AccuracyText;
     public Text EvadeText;
+    public Text EvadeBonusText;
+    public Text DefenseBonusText;
+    public Text TerrainNameText;
+    public Text PhaseText;
 
 
 

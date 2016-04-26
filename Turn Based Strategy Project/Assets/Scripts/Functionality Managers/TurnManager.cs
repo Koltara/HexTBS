@@ -60,20 +60,13 @@ public class TurnManager : MonoBehaviour {
         switch (phaseStatus)
         {
             case kPlayer:
-                for (int j = 0; j < CharacterManager.instance.getCharacterInstanceListSize(); j++)
-                {
-                    if (CharacterManager.instance.getCharacterInstance(j) != null)
-                        CharacterManager.instance.getCharacterInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
-                }
-                CharacterManager.instance.setActionableCharacters();
+                StartCoroutine(ShowPhaseTransition(kPlayer));
+                StartCoroutine(activateUnits(phaseStatus));
                 break;
             case kEnemy:
-                for (int j = 0; j < EnemyManager.instance.getEnemyInstanceListSize(); j++)
-                {
-                    if (EnemyManager.instance.getEnemyInstance(j) != null)
-                        EnemyManager.instance.getEnemyInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
-                }
-                EnemyManager.instance.setActionableEnemies();
+                StartCoroutine(ShowPhaseTransition(kEnemy));
+
+                StartCoroutine(activateUnits(phaseStatus));
                 break;
             case kNeutral:
                 nextPhase();
@@ -87,11 +80,54 @@ public class TurnManager : MonoBehaviour {
         phaseStatus = kPlayer;
         inspectorPhase = phaseStatus;
 	}
+    IEnumerator activateUnits(int phaseStatus)
+    {
+        yield return new WaitForSeconds(0);
+        if (phaseStatus == kPlayer)
+        {
+            for (int j = 0; j < CharacterManager.instance.getCharacterInstanceListSize(); j++)
+            {
+                if (CharacterManager.instance.getCharacterInstance(j) != null)
+                    CharacterManager.instance.getCharacterInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
+            }
+            CharacterManager.instance.setActionableCharacters();
+        } else if (phaseStatus == kEnemy)
+        {
+            for (int j = 0; j < EnemyManager.instance.getEnemyInstanceListSize(); j++)
+            {
+                if (EnemyManager.instance.getEnemyInstance(j) != null)
+                    EnemyManager.instance.getEnemyInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
+            }
+            EnemyManager.instance.setActionableEnemies();
+        }
+        
+    }
+    
 	
 	// Update is called once per frame
 	void Update () {
         inspectorPhase = phaseStatus;
 	}
+    IEnumerator ShowPhaseTransition(int newPhase)
+    {
+        switch (newPhase)
+        {
+            case kPlayer:
+                GridManager.instance.PhaseText.gameObject.SetActive(true);
+                GridManager.instance.PhaseText.text = "Player Phase";
+                yield return new WaitForSeconds(2);
+                GridManager.instance.PhaseText.text = "";
+                GridManager.instance.PhaseText.gameObject.SetActive(false);
+                break;
+            case kEnemy:
+                GridManager.instance.PhaseText.gameObject.SetActive(true);
+                GridManager.instance.PhaseText.text = "Enemy Phase";
+                yield return new WaitForSeconds(2);
+                GridManager.instance.PhaseText.text = "";
+                GridManager.instance.PhaseText.gameObject.SetActive(false);
+                break;
+        }
+    }
     public void initiateCombat(GameObject initiator, GameObject target)
     {
         //Initiator Attacks
