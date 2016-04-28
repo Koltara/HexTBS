@@ -39,6 +39,9 @@ public class CursorMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        if (GridManager.instance.pause)
+            return;
+
         currentTile.RemoveHighlight();
 
         if (Input.GetKeyUp(KeyCode.DownArrow))
@@ -115,10 +118,28 @@ public class CursorMovement : MonoBehaviour {
             GridManager.instance.AttackPowerText.text = "Attack Power: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().strength;
             GridManager.instance.DefenseText.text = "Defense: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().defense;
 
+            GridManager.instance.NameText.text = currentTile.containedCharacter.GetComponent<CharacterStatus>().name;
+            GridManager.instance.LevelText.text = "Level: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().currentLevel;
+            GridManager.instance.ExpText.text = "Exp: " + currentTile.containedCharacter.GetComponent<CharacterStatus>().experience;
+
             GridManager.instance.DefenseBonusText.text = "Defense: " + currentTile.terrainType.defenseBonus;
             GridManager.instance.EvadeBonusText.text = "Evade: " + currentTile.terrainType.evadeBonus;
             GridManager.instance.TerrainNameText.text = "Terrain: " + currentTile.terrainType.name;
+
+            int tempFriendship = Mathf.Abs(currentTile.containedCharacter.GetComponent<CharacterStatus>().friendship);
             
+            if (tempFriendship >= 0 && tempFriendship < 15)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Unsatisfied with current faction.";
+            }
+            else if (tempFriendship >= 15 && tempFriendship < 49)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Beginning to question current faction.";
+            }
+            if (tempFriendship >= 50)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Satisfied with current faction";
+            }
         }
 
     }

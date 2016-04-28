@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour {
 
+    public bool pause = false;
     
     public GameObject Hex;
     public GameObject Line;
@@ -40,6 +41,10 @@ public class GridManager : MonoBehaviour {
     public Text DefenseBonusText;
     public Text TerrainNameText;
     public Text PhaseText;
+    public Text AllegianceText;
+    public Text LevelText;
+    public Text NameText;
+    public Text ExpText;
 
 
 
@@ -67,6 +72,13 @@ public class GridManager : MonoBehaviour {
         //renderer component attached to the Hex prefab is used to get the current width and height
         hexWidth = Hex.GetComponent<Renderer>().bounds.size.x;
         hexHeight = Hex.GetComponent<Renderer>().bounds.size.y;
+    }
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.LoadLevel(0);
+        }
     }
 
     //Method to calculate the position of the first hexagon tile
@@ -126,8 +138,16 @@ public class GridManager : MonoBehaviour {
 
                 if (x % 3 == 0 && x != 0)
                     tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kForest);
+                else if (y % 8 == 0)
+                {
+                    tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kHill);
+                }
                 else tb.terrainType = new TerrainType((int)TileBehaviour.TerrainTypes.kNormal);
 
+                if (y == 15)
+                {
+                    tb.tile.Passable = false;
+                }
                 if (x % 4 == 0 && y == 0)
                     tb.setPlayerSpawnStatus(true);
                 if (x % 5 == 0 && y == 5)
@@ -251,9 +271,7 @@ public class GridManager : MonoBehaviour {
 
         populateCharacterList(3);
         populateEnemyList(4);
-        Debug.Log("Character Name: " + this.GetComponent<CharacterManager>().getCharacter(0).GetComponent<CharacterStatus>().characterName);
-        Debug.Log("Character Name: " + this.GetComponent<CharacterManager>().getCharacter(1).GetComponent<CharacterStatus>().characterName);
-
+        
         //Iterate through the gameboard, spawning characters from the character list at player spawn tiles
         for (int i = 0; i < gridWidthInHexes; i++)
             for (int j = 0; j < gridHeightInHexes; j++)
@@ -272,7 +290,7 @@ public class GridManager : MonoBehaviour {
                     //GameObject charInstance;
                     if (characterListPosition < this.GetComponent<CharacterManager>().getCharacterListSize())
                     {
-                        Debug.Log("Generated Character at: " + characterListPosition);
+                        
                         
                         tempTB.setContainedCharacter(tempCharacter);
 
@@ -309,7 +327,7 @@ public class GridManager : MonoBehaviour {
                         tempTB.tile.Passable = false;
                         tempTB.setEnemy(true);
 
-                        tempEnemy.GetComponent<EnemyMovementController>().currentTB = tempTB;
+                        tempEnemy.GetComponent<SimpleCharacterMovement>().currentTB = tempTB;
                         tempEnemy.transform.position = calcWorldCoord(new Vector2(i, j));
                         tempEnemy.name = tempEnemy.GetComponent<CharacterStatus>().characterName;
 
@@ -360,9 +378,14 @@ public class GridManager : MonoBehaviour {
             tempChar.GetComponent<CharacterStatus>().experience = 0;
 
             tempChar.GetComponent<CharacterStatus>().loyalty = 50;
+
             tempChar.GetComponent<CharacterStatus>().courage = 50;
             tempChar.GetComponent<CharacterStatus>().greed = 50;
-            tempChar.GetComponent<CharacterStatus>().friendship = 50;
+
+            if (i == 0)
+                tempChar.GetComponent<CharacterStatus>().friendship = 5;
+            else tempChar.GetComponent<CharacterStatus>().friendship = 50;
+
             tempChar.GetComponent<CharacterStatus>().patience = 50;
 
 
@@ -410,9 +433,14 @@ public class GridManager : MonoBehaviour {
             tempEnemy.GetComponent<CharacterStatus>().experience = 0;
 
             tempEnemy.GetComponent<CharacterStatus>().loyalty = 50;
+
             tempEnemy.GetComponent<CharacterStatus>().courage = 50;
             tempEnemy.GetComponent<CharacterStatus>().greed = 50;
-            tempEnemy.GetComponent<CharacterStatus>().friendship = -50;
+
+            if (i == 0)
+                tempEnemy.GetComponent<CharacterStatus>().friendship = 5;
+            else tempEnemy.GetComponent<CharacterStatus>().friendship = -50;
+
             tempEnemy.GetComponent<CharacterStatus>().patience = 50;
 
 
@@ -421,6 +449,8 @@ public class GridManager : MonoBehaviour {
 
         }
     }
+
+    //Recursive A Search Algorithm to find possible movements
     public void generateMovementRange(TileBehaviour startTile, int movementRange)
     {
         if (this.possibleMoves == null)
@@ -444,6 +474,7 @@ public class GridManager : MonoBehaviour {
         }
 
     }
+    //Return all tiles in the movement range to their previous state
     public void hideMovementRange()
     {
         if (possibleMoves != null)

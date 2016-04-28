@@ -28,6 +28,14 @@ public class CharacterManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (characterInstanceList.Count() == 0)
+        {
+            GridManager.instance.PhaseText.text = "Game Over";
+            GridManager.instance.PhaseText.color = Color.red;
+            GridManager.instance.pause = true;
+
+            
+        }
         if (TurnManager.instance.getPhaseStatus() == TurnManager.kPlayer)
         {
             if (numActionableCharacters <= 0)

@@ -112,6 +112,12 @@ public class CharacterStatus : MonoBehaviour {
 
         int tempEvadeBonus = 0;
 
+        if (friendship >= 0)
+        {
+            allegiance = TurnManager.kPlayer;
+        }
+        else allegiance = TurnManager.kEnemy;
+
         for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
         {
             if (this.gameObject == CharacterManager.instance.getCharacterInstance(i))
@@ -129,18 +135,22 @@ public class CharacterStatus : MonoBehaviour {
 
         }
 
+        tempEvadeBonus = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.evadeBonus;
+        defenseMod = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.defenseBonus;
+
         if (allegiance == TurnManager.kPlayer)
         {
 
-            tempEvadeBonus = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.evadeBonus;
-            defenseMod = GetComponent<SimpleCharacterMovement>().currentTB.terrainType.defenseBonus;
-            this.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+            if (ableToMove || TurnManager.instance.getPhaseStatus() == TurnManager.kEnemy)
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+            else this.gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
         }
         else if (allegiance == TurnManager.kEnemy)
         {
-            tempEvadeBonus = GetComponent<EnemyMovementController>().currentTB.terrainType.evadeBonus;
-            defenseMod = GetComponent<EnemyMovementController>().currentTB.terrainType.defenseBonus;
-            this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+
+            if (ableToMove || TurnManager.instance.getPhaseStatus() == TurnManager.kPlayer)
+                this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+            else this.gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
         }
 
         accuracy = 80 + (skill * 2);
@@ -161,7 +171,7 @@ public class CharacterStatus : MonoBehaviour {
                 Destroy(this.gameObject);
             } else if (allegiance == TurnManager.kEnemy)
             {
-                TileBehaviour tempTB = this.gameObject.GetComponent<EnemyMovementController>().currentTB;
+                TileBehaviour tempTB = this.gameObject.GetComponent<SimpleCharacterMovement>().currentTB;
                 EnemyManager.instance.removeEnemyInstance(this.gameObject);
                 tempTB.setContainedCharacter(null);
                 tempTB.tile.Passable = true;

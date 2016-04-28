@@ -88,7 +88,10 @@ public class TurnManager : MonoBehaviour {
             for (int j = 0; j < CharacterManager.instance.getCharacterInstanceListSize(); j++)
             {
                 if (CharacterManager.instance.getCharacterInstance(j) != null)
+                {
                     CharacterManager.instance.getCharacterInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
+                    
+                }
             }
             CharacterManager.instance.setActionableCharacters();
         } else if (phaseStatus == kEnemy)
@@ -96,7 +99,10 @@ public class TurnManager : MonoBehaviour {
             for (int j = 0; j < EnemyManager.instance.getEnemyInstanceListSize(); j++)
             {
                 if (EnemyManager.instance.getEnemyInstance(j) != null)
+                {
                     EnemyManager.instance.getEnemyInstance(j).GetComponent<CharacterStatus>().ableToMove = true;
+                    
+                }
             }
             EnemyManager.instance.setActionableEnemies();
         }
@@ -269,11 +275,17 @@ public class TurnManager : MonoBehaviour {
         {
             CharacterManager.instance.removeCharacterInstance(moveToEnemy);
             EnemyManager.instance.addEnemyInstance(moveToEnemy);
+
+            moveToEnemy.GetComponent<SimpleCharacterMovement>().currentTB.setEnemy(true);
+
         }
         if (moveToAlly != null)
         {
             CharacterManager.instance.addCharacterInstance(moveToAlly);
             EnemyManager.instance.removeEnemyInstance(moveToAlly);
+
+            moveToAlly.GetComponent<CharacterStatus>().ableToMove = false;
+            moveToAlly.GetComponent<SimpleCharacterMovement>().currentTB.setEnemy(false);
         }
 
 

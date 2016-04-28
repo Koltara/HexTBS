@@ -31,6 +31,15 @@ public class EnemyManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (enemyInstanceList.Count() == 0)
+        {
+            GridManager.instance.PhaseText.text = "Victory!";
+            GridManager.instance.PhaseText.color = Color.blue;
+            GridManager.instance.pause = true;
+
+            
+
+        }
         if (TurnManager.instance.getPhaseStatus() == TurnManager.kEnemy)
         {
             if (numActionableEnemies <= 0)

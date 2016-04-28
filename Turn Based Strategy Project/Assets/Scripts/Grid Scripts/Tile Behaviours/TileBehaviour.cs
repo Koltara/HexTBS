@@ -78,7 +78,15 @@ public class TileBehaviour : MonoBehaviour
         gridY = tile.Y;
         //if (this.containedCharacter != null)
         //    this.containedCharacter.transform.position = this.transform.position;
-        
+
+        if (containedCharacter != null)
+        {
+            if (containedCharacter.GetComponent<CharacterStatus>().allegiance == TurnManager.kEnemy)
+            {
+                tile.Passable = false;
+            }
+            else tile.Passable = true;
+        }
     }
 
     public void changeColor(Color color)
@@ -129,15 +137,37 @@ public class TileBehaviour : MonoBehaviour
             GridManager.instance.AttackPowerText.text = "Attack Power: " + (containedCharacter.GetComponent<CharacterStatus>().strength + containedCharacter.GetComponent<CharacterStatus>().strengthMod);
             GridManager.instance.DefenseText.text = "Defense: " + (containedCharacter.GetComponent<CharacterStatus>().defense + containedCharacter.GetComponent<CharacterStatus>().defenseMod);
             GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.blue;
+
+            GridManager.instance.NameText.text = containedCharacter.GetComponent<CharacterStatus>().name;
+            GridManager.instance.LevelText.text = "Level: " + containedCharacter.GetComponent<CharacterStatus>().currentLevel;
+            GridManager.instance.ExpText.text = "Exp: " + containedCharacter.GetComponent<CharacterStatus>().experience;
+
+            int tempFriendship = Mathf.Abs(containedCharacter.GetComponent<CharacterStatus>().friendship);
+
+            if (tempFriendship >= 0 && tempFriendship < 15)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Unsatisfied with current faction.";
+            }
+            else if (tempFriendship >= 15 && tempFriendship < 49)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Beginning to question current faction.";
+            }
+            if (tempFriendship >= 50)
+            {
+                GridManager.instance.AllegianceText.text = "Allegiance: Satisfied with current faction";
+            }
         }
         else
         {
-            GridManager.instance.HealthText.text = " - ";
-            GridManager.instance.AccuracyText.text = " - ";
-            GridManager.instance.EvadeText.text = " - ";
-            GridManager.instance.AttackPowerText.text = " - ";
-            GridManager.instance.DefenseText.text = " - ";
-            GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.white;
+            if (!GridManager.instance.pause)
+            {
+                GridManager.instance.HealthText.text = " - ";
+                GridManager.instance.AccuracyText.text = " - ";
+                GridManager.instance.EvadeText.text = " - ";
+                GridManager.instance.AttackPowerText.text = " - ";
+                GridManager.instance.DefenseText.text = " - ";
+                GridManager.instance.HealthText.GetComponentInParent<Image>().color = Color.white;
+            }
         }
         GridManager.instance.DefenseBonusText.text = "Defense: " + this.terrainType.defenseBonus;
         GridManager.instance.EvadeBonusText.text = "Evade: " + this.terrainType.evadeBonus;
@@ -202,6 +232,7 @@ public class TileBehaviour : MonoBehaviour
                     GridManager.instance.destTileTB = this;
                     originTileTB.containedCharacter.GetComponent<SimpleCharacterMovement>().currentTB = this;
                     originTileTB.containedCharacter.GetComponent<CharacterStatus>().ableToMove = false;
+                    originTileTB.containedCharacter.GetComponent<SpriteRenderer>().color = Color.grey;
                     GridManager.instance.generateAndShowPath();
                     GridManager.instance.hideMovementRange();
 
@@ -212,6 +243,7 @@ public class TileBehaviour : MonoBehaviour
                         {
                             TurnManager.instance.initiateCombat(this.containedCharacter, tileTB.containedCharacter);
                             Debug.Log(this.containedCharacter + "fighting " + tileTB.containedCharacter);
+                            break;
                         }
                     }
 

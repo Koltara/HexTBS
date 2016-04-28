@@ -18,6 +18,35 @@ public class SimpleCharacterMovement : MonoBehaviour {
         //    currentTB = GridManager.instance.board[currentTile.Location];
         //    currentTile = currentTB.tile;
         //}
+
+        //Enemy AI if allied with enemy
+        if (this.gameObject.GetComponent<CharacterStatus>().allegiance == 1)
+        {
+            if (TurnManager.instance.getPhaseStatus() == TurnManager.kEnemy)
+            {
+                if (this.GetComponent<CharacterStatus>().ableToMove)
+                {
+                    foreach (Tile tile in this.currentTB.tile.Neighbours)
+                    {
+                        TileBehaviour tb = GridManager.instance.board[tile.Location];
+                        for (int i = 0; i < CharacterManager.instance.getCharacterInstanceListSize(); i++)
+                        {
+                            if (CharacterManager.instance.getCharacterInstance(i) == tb.containedCharacter)
+                            {
+                                TurnManager.instance.initiateCombat(this.gameObject, tb.containedCharacter);
+                                Debug.Log("Fighting " + CharacterManager.instance.getCharacterInstance(i));
+                                this.GetComponent<CharacterStatus>().ableToMove = false;
+                                return;
+                                
+                            }
+                        }
+                    }
+                    this.GetComponent<CharacterStatus>().ableToMove = false;
+                    return;
+                }
+            }
+        }
+
         if (currentTB != null)
             this.gameObject.transform.position = GridManager.instance.calcWorldCoord(new Vector2(currentTB.gridX, currentTB.gridY));
     }
